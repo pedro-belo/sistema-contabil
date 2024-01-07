@@ -28,7 +28,7 @@ Crição de desdobramento. No exemplo a seguir o desdobramento "Caixa" é criado
 
 ![Criação de desdobramento](images/2.png "Criação de desdobramento")
 
-Ao finalizar o cadastro de todas as contas, teremos a seguinte vizualização:
+Ao finalizar o cadastro de todas as contas, teremos a seguinte visualização:
 ![Após o cadastro de desdobramentos](images/3.png "Após o cadastro de desdobramentos")
 
 Feito isso, temos o necessário para responder o exercício proposto.
@@ -43,7 +43,7 @@ Preenchido o formulário para criação da transação, o usuário é redirecion
 
 ![Histórico de Transações - 1](images/5.png "Histórico de Transações - 1")
 
-Para realização dos lançamentos referentes a transação criada anteriormente, o botão com ícone "+" deve ser clicado. Esta ação levará o usuário até o formulário que permitirá criar a nova operação.
+Para realização dos lançamentos referentes à transação criada anteriormente, o botão com ícone "+" deve ser clicado. Esta ação levará o usuário até o formulário que permitirá criar a nova operação.
 
 Lançamento - Crédito
 ![Histórico de Transações - 1](images/6.png "Histórico de Transações - 1")
@@ -61,7 +61,7 @@ No final o total de débitos e créditos serão iguais.
 
 ## **2**: Compra à vista de móveis e utensílios, na importância de $ 2.000;
 
-O mesmo procedimento realizado na primeira transação e feito novamente: Cria-se uma nova transação e então são feitos os respectivos lançamentos.
+O mesmo procedimento realizado na primeira transação é feito novamente: Cria-se uma nova transação e então são feitos os respectivos lançamentos.
 
 Após a criação da transação
 ![Histórico de Transações - 2](images/9.png "Histórico de Transações - 2")
@@ -96,7 +96,7 @@ Resultado final:
 
 Após a criação da transação
 ![Histórico de Transações - 4](images/18.png "Histórico de Transações - 4")
-Apartir daqui este item será omitido nas próximas transações, visto que ele é similar aos proximos casos.
+A partir daqui este item será omitido nas próximas transações, visto que ele é similar aos próximos casos.
 
 Lançamento - Crédito
 ![Histórico de Transações - 4](images/19.png "Histórico de Transações - 4")
@@ -187,12 +187,12 @@ Agora vamos verificar os saldos individuais de cada conta. Observe que além da 
 Esse recurso é uma espécie de balancete de verificação, que exibe o estado do sistema exatamente no momento daquela transação. Assim, como citado no item 4, podemos rastrear qualquer operação que ocorreu no passado.
 ![Balancete de Verificação](images/42.png "Balancete de Verificação")
 
-Outro recurso que pode ser interessante é o de configuração de moeda corrente. Isso nos possibilita vizualizar o balancete anterior (ou qualquer informação em outra página) em releção a outro tipo de moeda.
+Outro recurso que pode ser interessante é o de configuração de moeda corrente. Isso nos possibilita visualizar o balancete anterior (ou qualquer informação em outra página) em relação a outro tipo de moeda.
 
-Monstrando valores em relação ao dólar (USD).
+Mostrando valores em relação ao dólar (USD).
 
 ![Balancete de Verificação](images/43.png "Balancete de Verificação")
 
-O mesmo balancete de antes, más agora em dólar a uma cotação de 4.87 Reais/Dólar (7 de janeiro de 2024).
+O mesmo balancete de antes, mas agora em dólar a uma cotação de 4.87 Reais/Dólar (7 de janeiro de 2024).
 
 ![Balancete de Verificação](images/44.png "Balancete de Verificação")
