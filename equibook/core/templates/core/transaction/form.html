@@ -1,0 +1,37 @@
+<div class="row">
+
+    <form class="offset-md-2 col-md-8 col-sm-10 offset-sm-1" action="#" method="post">
+
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="{{form.title.id_for_label}}" class="form-label">Título <small class="form-text text-danger">(Obrigatório)</small></label>
+            {{form.title}}
+            <p class="form-text">Dê um título claro e objetivo que resuma o conteúdo da transação. Por exemplo, um título possível é '<strong>Venda de mercadorias</strong>' ou '<strong>Compra de insumos</strong>'.</p>
+        </div>
+
+        <div class="mb-3">
+            <label for="{{form.description.id_for_label}}" class="form-label">Detalhes <small class="form-text text-secondary">(Opcional)</small></label>
+            {{form.description}}
+            <p class="form-text">Forneça detalhes relevantes da transação para facilitar o entendimento. Caso tenha algum documento que deseje anexar, você pode fazer isto após realizar os lançamentos.</p>
+        </div>
+
+        {% if form.archived %}
+        <div class="mb-3">
+            <div class="form-check form-switch">
+                {{form.archived}}
+                <label class="form-check-label" for="{{form.archived.id_for_label}}">Arquivar transação</label>
+            </div>
+            <small class="form-text">
+                A transação arquivada não será exibida na página de listagem de transações ou nas contas patrimoniais e de resultado.
+            </small>
+        </div>
+        {% endif %}
+
+        <div class="my-3 text-center">
+            {% include "core/snippets/btn_save.html" with text="Salvar" type="primary" %}
+        </div>
+
+    </form>
+
+</div>

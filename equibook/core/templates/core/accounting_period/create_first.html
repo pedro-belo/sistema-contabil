@@ -1,0 +1,37 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<h1 class="mt-4 p-4 text-center">
+    Criação de Período Contábil
+</h1>
+
+{% include "snippets/non_field_errors.html" with form=form %}
+
+<div class="row">
+
+    <form class="offset-md-3 col-md-6 col-lg-4 offset-lg-4 col-sm-10 offset-sm-1" action="{% url 'core:accounting-period-create' %}" method="post">
+
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="{{form.start_date.id_for_label}}" class="form-label">Início do Período</label>
+            {{form.start_date}}
+            {% include "snippets/field_errors.html" with field=form.start_date %}
+        </div>
+
+        <div class="mb-3">
+            <label for="{{form.end_date.id_for_label}}" class="form-label">Fim do Período</label>
+            {{form.end_date}}
+            {% include "snippets/field_errors.html" with field=form.end_date %}
+        </div>
+
+        <div class="my-3 text-center">
+            {% include "core/snippets/btn_save.html" with text="Salvar" type="primary" %}
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

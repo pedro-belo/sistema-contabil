@@ -1,0 +1,47 @@
+version: '3.1'
+
+services:
+  app:
+    image: equibook
+    container_name: equibook-app
+    hostname: equibook-app
+    depends_on:
+      - web
+      - db
+    ports:
+      - 8000:8000
+    networks:
+      - ebnet
+
+  db:
+    image: postgres
+    container_name: equibook-db
+    hostname: equibook-db
+    restart: on-failure
+    volumes:
+      - ebdb:/var/lib/postgresql/data
+    networks:
+      - ebnet
+    environment:
+      POSTGRES_DB: equibook
+      POSTGRES_USER: equibook
+      POSTGRES_PASSWORD: eb@123
+
+  web:
+    image: nginx
+    container_name: equibook-web
+    hostname: equibook-web
+    restart: on-failure
+    networks:
+      - ebnet
+    volumes:
+    - ./static:/usr/share/nginx/html/static
+    - ./setup/nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+    - "7777:80"
+
+networks:
+  ebnet: 
+
+volumes:
+  ebdb:

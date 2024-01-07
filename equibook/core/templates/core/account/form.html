@@ -1,0 +1,39 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<header class="mt-4 p-4 text-center">
+    <h1>{% block h1_content %}{% endblock %}</h1>
+    <p>{% block p_content %}{% endblock %}</p>
+</header>
+
+<div class="row">
+
+    <div class="offset-md-2 col-md-8 col-sm-10 offset-sm-1">
+        <form action="#" method="post">
+
+            {% csrf_token %}
+        
+            <div class="mb-3">
+                <label for="{{form.name.id_for_label}}" class="form-label">Nome da Conta</label>
+                {{form.name}}
+                {% block name_help %}{% endblock %}
+            </div>
+
+            <div class="text-center my-4">
+        
+                {% block btn_delete %}{% endblock %}
+        
+                {% block btn_submit %}
+                {% include "core/snippets/btn_save.html" with text="Salvar" type="primary" %}
+                {% endblock %}
+            </div>   
+        
+        </form>
+    </div>
+
+</div>
+
+{% block after_form %}{% endblock%}
+
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "core/base.html" %}
+
+{% block head_title %}Criação de Transação{% endblock %}
+
+{% block content %}
+
+{% if form.account_period is None %}
+  {% include "./period_warning.html" %}
+{% else  %}
+
+  <h1 class="mt-4 p-4 text-center">
+    Criação de Transação
+  </h1>
+  
+  {% include "../form.html" %}
+
+{% endif %}
+
+{% endblock %}

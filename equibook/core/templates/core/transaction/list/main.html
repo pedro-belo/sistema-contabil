@@ -1,0 +1,40 @@
+{% extends "core/base.html" %}
+
+
+{% block head_title %}Históricos de Transações{% endblock %}
+
+{% block content %}
+
+<h1 class="p-4 text-center">Históricos de Transações</h1>
+
+<div class="row">
+  
+  {% include "core/snippets/period_warning.html" %}
+
+  {% for transaction in transactions %}
+
+  <div class="col-12" id="{{transaction.detail.id}}">
+
+    {% if transaction.detail.archived %}
+    {% include "./archived_t.html" with transaction=transaction.detail %}
+
+    {% else %}
+    
+    {% include "./archived_f.html" with transaction=transaction.detail %}
+
+    {% endif %}
+
+  </div>
+  {% empty %}
+  <p href="{% url 'core:transaction-create' %}" class="text-center lead">
+    Você ainda não cadastrou nenhuma transação. Para cadastrar uma nova transação e realizar seus lançamentos, clique <a href="{% url 'core:transaction-create' %}" class="badge bg-primary text-decoration-none">aqui</a>.
+  </p>
+  
+  {% endfor %}
+
+  {% if transactions %}
+  {% include "core/snippets/pagination.html" with paginator=paginator page_obj=page_obj %}
+  {% endif %}
+</div>
+
+{% endblock %}

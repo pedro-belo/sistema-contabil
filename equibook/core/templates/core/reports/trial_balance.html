@@ -1,0 +1,59 @@
+{% extends "core/base.html" %}
+
+{% load humanize %}
+
+{% load to_current_currency %}
+
+{% block head_title %}Balancete de Verificação{% endblock %}
+
+{% block content %}
+
+<header class="mt-4 p-4 text-center">
+    <h1>Balancete de Verificação</h1>
+    <h2>{% now "d-m-Y" %}</h2>
+</header>
+
+<table class="table table-hover shadow {% if DARK_MODE %}table-dark border border-secondary{% endif %}">
+    <thead class="text-center fw-bold {% if DARK_MODE %}bg-secondary bg-opacity-50{% else %}bg-primary{% endif %}">
+        <tr>
+            <th class="bg-transparent text-white align-middle border-end {% if DARK_MODE %} border-dark{% else %} border-light{% endif %}" rowspan="2">Contas</th>
+            <th class="bg-transparent text-white border-bottom border-end {% if DARK_MODE %} border-dark {% else %}border-light{% endif %}" colspan="2">Movimento <span class="badge bg-white text-primary">{{app_settings.current_currency.label}}</span></th>
+            <th class="bg-transparent text-white border-bottom border-end {% if DARK_MODE %} border-dark {% else %}border-light{% endif %}" colspan="2">Saldos <span class="badge bg-white text-primary">{{app_settings.current_currency.label}}</span></th>
+        </tr>
+        <tr>
+            <th class="bg-transparent text-white {% if DARK_MODE %}border-dark border-bottom{% endif %}">Débitos</th>
+            <th class="bg-transparent text-white border-end {% if DARK_MODE %}border-dark border-bottom {% else %} border-light {% endif %}">Créditos</th>
+            <th class="bg-transparent text-white {% if DARK_MODE %}border-dark border-bottom{% endif %}">Devedores</th>
+            <th class="bg-transparent text-white {% if DARK_MODE %}border-dark border-bottom{% endif %}">Credores</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for item in balancete.accounts.values %}
+        <tr>
+            <td>
+                <p class="fw-bold m-0">{{item.name}}</p>
+                <small class="text-muted">
+                    {% for account in item.get_path %}
+                    <a href="{% url 'core:account-detail' pk=account.id %}" class="badge text-decoration-none {% if DARK_MODE %}bg-secondary{% else %}bg-info{% endif %}">{{account.name}}</a>
+                    {% endfor %}
+                </small>
+            </td>
+            <td class="text-end">{{item.moviment_debit|to_current_currency:app_settings|intcomma}} </td>
+            <td class="text-end">{{item.moviment_credit|to_current_currency:app_settings|intcomma}} </td>
+            <td class="text-end">{{item.balance_debit|to_current_currency:app_settings|intcomma}} </td>
+            <td class="text-end">{{item.balance_credit|to_current_currency:app_settings|intcomma}} </td>
+        </tr>
+        {% endfor %}
+        <tr class="bg-light bg-opacity-75">
+            <td>Σ</td>
+            <td class="text-end">{{balancete.moviment_d_sum|to_current_currency:app_settings|intcomma}} </td>
+            <td class="text-end">{{balancete.moviment_c_sum|to_current_currency:app_settings|intcomma}} </td>
+            <td class="text-end">{{balancete.balance_d_sum|to_current_currency:app_settings|intcomma}} </td>
+            <td class="text-end">{{balancete.balance_c_sum|to_current_currency:app_settings|intcomma}} </td>
+        </tr>
+    </tbody>
+
+</table>
+
+{% endblock %}

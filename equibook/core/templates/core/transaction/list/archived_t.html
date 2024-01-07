@@ -1,0 +1,43 @@
+<div class="card text-center my-4 border-0 {% if DARK_MODE %}bg-secondary bg-opacity-50{% else %}shadow{% endif %}">
+  <div class="card-header py-2 fs-5 fw-bold {% if DARK_MODE %}text-white{% else %}bg-dark{% endif %}">
+    {{transaction.id}}: {{transaction.title}}
+  </div>
+  <div class="card-body p-0">
+  </div>
+  <div class="card-footer border-0 bg-light bg-opacity-50 {% if DARK_MODE %}bg-dark{% endif %}">
+    <a class="btn btn-light btn-icon shadow-sm" title="Balancete de Verificação"
+      href="{% url 'core:trial-balance' pk=transaction.id %}">
+      <span class="material-icons-outlined">event_note</span>
+    </a>
+    <a class="btn btn-light btn-icon shadow-sm" title="Detalhes Sobre a Transação"
+      href="{% url 'core:transaction-detail' pk=transaction.id %}">
+      <span class="material-icons-outlined">file_open</span>
+    </a>
+
+    {% if transaction.has_previous %}
+    <a class="btn btn-light btn-icon shadow-sm" title="Mover para baixo"
+      href="{% url 'core:transaction-move-down' pk=transaction.id %}#{{transaction.id}}">
+      <span class="material-icons-outlined">move_down</span>
+    </a>
+    {% else %}
+    <a class="btn btn-light btn-icon shadow-sm disabled" title="Mover para baixo" href="#">
+      <span class="material-icons-outlined {% if DARK_MODE %}text-dark{% endif %}">move_down</span>
+    </a>
+    {% endif %}
+
+    {% if not transaction.has_next %}
+    <a class="btn btn-light btn-icon shadow-sm disabled" title="Mover para cima" href="#">
+      <span class="material-icons-outlined {% if DARK_MODE %}text-dark{% endif %}">move_up</span>
+    </a>
+
+    {% include "./remove_transaction.html" with transaction=transaction %}
+
+    {% else %}
+    <a class="btn btn-light btn-icon shadow-sm" title="Mover para cima"
+      href="{% url 'core:transaction-move-up' pk=transaction.id %}#{{transaction.id}}">
+      <span class="material-icons-outlined">move_up</span>
+    </a>
+    {% endif %}
+
+  </div>
+</div>

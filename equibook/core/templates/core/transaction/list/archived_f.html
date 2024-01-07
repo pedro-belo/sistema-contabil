@@ -1,0 +1,130 @@
+{% load humanize %}
+
+{% load to_current_currency %}
+
+<div class="card text-center my-4 border-0 {% if DARK_MODE %}bg-secondary bg-opacity-25{% else %}shadow{% endif %}">
+  <div class="card-header py-2 fs-5 text-white fw-bold {% if DARK_MODE %}bg-secondary bg-opacity-50{% else %}bg-primary{% endif %}">
+  {{transaction.id}}: {{transaction.title}}
+</div>
+  <div class="card-body p-0" style="max-height: 340px;overflow-y: scroll;">
+    <div class="table-responsive">
+      <table class="table table-sm m-0">
+        <thead>
+          <tr {% if DARK_MODE %}class="border-dark"{% endif %}>
+
+            {% if view.period.id == transaction.period_id %}
+            <th {% if DARK_MODE %}class="bg-transparent text-white"{% endif %}>
+            </th>
+            {% endif %}
+
+            <th {% if DARK_MODE %}class="bg-transparent text-white"{% endif %}>
+              Data
+            </th>
+            <th {% if DARK_MODE %}class="bg-transparent text-white"{% endif %}>
+              Conta
+            </th>
+            <th {% if DARK_MODE %}class="bg-transparent text-white"{% endif %}>
+              Debito
+            </th>
+            <th {% if DARK_MODE %}class="bg-transparent text-white"{% endif %}>
+              Credito
+            </th>
+            <th {% if DARK_MODE %}class="bg-transparent text-white"{% endif %}>
+              D/C
+            </th>
+            <th {% if DARK_MODE %}class="bg-transparent text-white"{% endif %}>
+              Saldo
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for operation in transaction.operations %}
+          <tr {% if DARK_MODE %}class="border-dark"{% endif %}>
+
+            {% if view.period.id == transaction.period_id %}
+            <td {% if DARK_MODE %}class="bg-transparent text-white"{% endif %}>
+              {% include "./remove_operation.html" with operation=operation%}
+            </td>
+            {% endif %}
+
+            <td {% if DARK_MODE %}class="bg-transparent text-white"{% endif %}>
+              {{operation.date}}
+            </td>
+            <td {% if DARK_MODE %}class="bg-transparent text-white"{% endif %}>
+              {{operation.account_name}}
+            </td>
+            <td {% if DARK_MODE %}class="bg-transparent text-white"{% endif %}>
+              {{operation.debit|to_current_currency:app_settings|intcomma}}
+            </td>
+            <td {% if DARK_MODE %}class="bg-transparent text-white"{% endif %}>
+              {{operation.credit|to_current_currency:app_settings|intcomma}}
+            </td>
+            <td {% if DARK_MODE %}class="bg-transparent text-white"{% endif %}>
+              {{operation.get_type_display}}
+            </td>
+            <td {% if DARK_MODE %}class="bg-transparent text-white"{% endif %}>
+              {{operation.account_balance|to_current_currency:app_settings|intcomma}} 
+              <span class="badge {% if DARK_MODE %}bg-secondary{% else %}bg-primary{% endif %}">
+                {{app_settings.current_currency.label}}
+              </span>
+            </td>
+          </tr>
+          {% endfor %}
+          <tr {% if DARK_MODE %}class="border-dark"{% endif %}>
+            <td {% if DARK_MODE %}class="bg-transparent text-white"{% endif %} colspan="3"></td>
+            <td {% if DARK_MODE %}class="bg-transparent text-white"{% endif %}>Σ = {{transaction.debit_sum|to_current_currency:app_settings|intcomma}}</td>
+            <td {% if DARK_MODE %}class="bg-transparent text-white"{% endif %}>Σ = {{transaction.credit_sum|to_current_currency:app_settings|intcomma}}</td>
+            <td {% if DARK_MODE %}class="bg-transparent text-white"{% endif %} colspan="2"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card-footer border-0 {% if DARK_MODE %}bg-secondary bg-opacity-50{% else %}bg-light bg-opacity-50{% endif %}">
+    {% if view.period.id == transaction.period_id %}
+      <a class="btn btn-light btn-icon shadow-sm" title="Nova operação"
+        href="{% url 'core:operation-create' transaction_id=transaction.id %}">
+        <span class="material-icons-outlined">add</span>
+      </a>
+    {% endif %}
+
+    <a class="btn btn-light btn-icon shadow-sm" title="Balancete de Verificação"
+      href="{% url 'core:trial-balance' pk=transaction.id %}">
+      <span class="material-icons-outlined">event_note</span>
+    </a>
+
+    <a class="btn btn-light btn-icon shadow-sm" title="Detalhes Sobre a Transação"
+      href="{% url 'core:transaction-detail' pk=transaction.id %}">
+      <span class="material-icons-outlined">file_open</span>
+    </a>
+
+    {% if view.period.id == transaction.period_id %}
+    {% if transaction.has_previous %}
+      <a class="btn btn-light btn-icon shadow-sm" title="Mover para baixo"
+        href="{% url 'core:transaction-move-down' pk=transaction.id %}#{{transaction.id}}">
+        <span class="material-icons-outlined">move_down</span>
+      </a>
+      {% else %}
+      <a class="btn btn-light btn-icon shadow-sm disabled" title="Mover para baixo" href="#">
+        <span class="material-icons-outlined {% if DARK_MODE %}text-dark{% endif %}">move_down</span>
+      </a>
+    {% endif %}
+    {% endif %}
+
+    {% if view.period.id == transaction.period_id %}
+    {% if not transaction.has_next %}
+    <a class="btn btn-light btn-icon shadow-sm disabled" title="Mover para cima" href="#">
+      <span class="material-icons-outlined {% if DARK_MODE %}text-dark{% endif %}">move_up</span>
+    </a>
+
+    {% include "./remove_transaction.html" with transaction=transaction %}
+
+    {% else %}
+    <a class="btn btn-light btn-icon shadow-sm" title="Mover para cima" href="{% url 'core:transaction-move-up' pk=transaction.id %}#{{transaction.id}}">
+      <span class="material-icons-outlined">move_up</span>
+    </a>
+    {% endif %}
+    {% endif %}
+
+  </div>
+</div>

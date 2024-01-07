@@ -1,0 +1,13 @@
+{% extends "./form.html" %}
+
+{% block head_title %}Criação de Desdobramento{% endblock %}
+
+{% block h1_content %}Criação de Desdobramento{% endblock %}
+
+{% block p_content %}
+<a class="{% if DARK_MODE %}text-white{% else %}text-dark{% endif %}" href="{% url 'core:account-detail' pk=parent.id %}">{{parent.name}}</a>
+{% endblock %}
+
+{% block name_help %}
+<p class="form-text">Informe o nome para a nova divisão da conta <strong>{{parent.name}}</strong></p>
+{% endblock %}

@@ -1,0 +1,52 @@
+<header>
+    <h2>Iniciar Novo Período Contábil</h2>
+    <p class="lead">Para iniciar um novo período contábil, clique em 'Continuar' e proceda com o encerramento das contas
+        de receitas e despesas.</p>
+</header>
+
+<p>O período contábil representa o intervalo de tempo em que todas as atividades financeiras de uma entidade são
+    registradas e analisadas. Durante esse período, são documentadas todas as transações, receitas e despesas.
+    Ao encerrar um período contábil, a entidade prepara seus registros para o próximo ciclo financeiro, assegurando a
+    precisão das informações.</p>
+
+{% if preconditions %}
+
+<div class="my-2">
+    <span class="material-icons-outlined text-danger fs-2">warning</span>
+</div>
+
+{% for precondition in preconditions %}
+<p class="text-dark">A transação '<a href="{% url 'core:transaction-detail' pk=precondition.instance.id %}"
+        class="fw-bold text-danger">{{precondition.instance.title}}</a>' parece estar desbalanceada. Atualmente,
+    constatamos um valor de <span class="text-danger fw-bold">{{precondition.credit_sum}}</span> em créditos e <span
+        class="text-danger fw-bold">{{precondition.debit_sum}} </span> em débitos.</p>
+{% endfor %}
+
+{% endif %}
+
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Continuar</button>
+
+<div class="modal fade {% if DARK_MODE %}bg-dark bg-opacity-25 text-white{% endif %}" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content {% if DARK_MODE %}bg-dark bg-opacity-80 border-secondary{% endif %}">
+            <div class="modal-header {% if DARK_MODE %}border-secondary{% else %}{% endif %}">
+                <h5 class="modal-title" id="exampleModalLabel">Confirmação</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-start">
+                <p>Ao continuar para criar um novo período contábil, seus registros atuais ainda estarão disponíveis para
+                    edição até que todos os ajustes necessários sejam realizados. Certifique-se de concluir todas as
+                    correções e reconciliações antes de prosseguir para garantir a precisão e integridade dos registros
+                    financeiros.</p>
+                    <p>Deseja realmente continuar ?</p>
+            </div>
+            <div class="modal-footer {% if DARK_MODE %}modal-footer border-secondary{% endif %}">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+                <form action="{% url 'core:accounting-period-detail' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">Sim</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

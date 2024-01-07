@@ -1,0 +1,56 @@
+{% extends "./base.html" %}
+
+{% load static %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+<div class="mt-4">
+  <h1 class="text-center">EquiBook</h1>
+
+<div class="my-4 mx-auto" style="max-width: 420px;">
+  {% include "snippets/messages.html" %}
+</div>
+
+  <div class="row">
+    
+    {% include "snippets/non_field_errors.html" with form=form %}
+    
+    <form class="mx-auto" action="{% url 'users:login' %}" method="post" style="max-width: 390px;">
+
+      {% csrf_token %}
+      
+      <div class="mb-2">
+        <label for="{{form.username.id_for_label}}" class="fw-bold form-label">Usuário</label>
+        {{form.username}}
+        {% include "snippets/field_errors.html" with field=form.username %}
+      </div>
+      <div class="mb-2">
+        <label for="{{form.password.id_for_label}}" class="fw-bold form-label">Senha</label>
+        {{form.password}}
+        {% include "snippets/field_errors.html" with field=form.password %}
+      </div>
+      
+      <div class="p-2 text-center">
+        <button class="btn btn-primary" type="submit">
+          <div class="d-flex">
+            <span class="material-icons-outlined me-1">login</span>
+            <span>Login</span>
+          </div>
+        </button>
+      </div>
+      
+            <hr class="mt-2 pb-1 bg-dark bg-opacity-10 shadow">
+            
+            <div>
+              Ainda não é cadastrado ? 
+              <a class="fw-bold text-dark text-decoration-none" href="{% url 'users:register' %}">Cadastre-se</a>
+            </div>
+
+    </form>
+
+  </div>
+
+</div>
+{% endblock %}

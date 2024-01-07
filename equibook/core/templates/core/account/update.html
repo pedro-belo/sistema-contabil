@@ -1,0 +1,54 @@
+{% extends "./form.html" %}
+
+{% block head_title %}Edição de Conta{% endblock %}
+
+{% block h1_content %}Edição de Conta{% endblock %}
+
+{% block p_content %}
+    <a class="{% if DARK_MODE %}text-white{% else %}text-dark{% endif %}" href="{% url 'core:account-detail' pk=object.id %}">{{object.name}}</a>
+{% endblock %}
+
+{% block btn_delete %}
+{% if object.can_remove %}
+<button class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#remove-account">
+    <div class="d-flex">
+      <span class="material-icons-outlined me-1">delete</span>
+      <span>Remover</span>
+    </div>
+  </button>
+{% else %}
+<button class="btn btn-danger disabled" type="button">
+    <div class="d-flex">
+      <span class="material-icons-outlined me-1">delete</span>
+      <span>Remover</span>
+    </div>
+  </button>
+{% endif %}
+{% endblock %}
+
+{% block after_form %}
+{% if object.can_remove %}
+<!-- Modal -->
+<div class="modal fade" id="remove-account" tabindex="-1" aria-labelledby="remove-account-label"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="remove-account-label">Confirmar exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja remover <b>{{object.name}}</b></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+                <form action="{% url 'core:account-delete' pk=object.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Sim</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock%}

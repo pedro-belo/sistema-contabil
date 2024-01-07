@@ -1,0 +1,56 @@
+{% extends "core/base.html" %} {% block content %}
+
+<header class="mt-4 p-4 text-center">
+  <h1>Nova operação</h1>
+  <a class="{% if DARK_MODE %}text-white{% else %}text-dark{% endif %}" href="{% url 'core:transaction-detail' pk=transaction.id %}">{{transaction.title}}</a>
+</header>
+
+<div class="row">
+
+  <div class="offset-md-2 col-md-8 col-sm-10 offset-sm-1">
+    <form action="#" method="post">
+      {% csrf_token %}
+      
+      {% include "snippets/non_field_errors.html" with form=form %}
+      
+      <div class="row">
+        <div class="col-12 mb-2">
+          <label for="{{form.account.id_for_label}}" class="form-label">Conta </label>
+          {{form.account}}
+          <p class="form-text">Informe a conta que será <strong>debitada</strong> ou <strong>creditada</strong>.</p>
+          {% include "snippets/field_errors.html" with field=form.account %}
+        </div>
+  
+        <div class="col-sm-12 col-md-4">
+          <label for="{{form.type.id_for_label}}" class="form-label">Tipo </label>
+          {{form.type}}
+          <p class="form-text">Tipo de operação</p>
+          {% include "snippets/field_errors.html" with field=form.type %}
+        </div>
+  
+        <div class="col-sm-12 col-md-4">
+          <label for="{{form.value.id_for_label}}" class="form-label">Valor </label>
+          {{form.value}}
+          <p class="form-text">Valor em <strong>{{app_settings.base_currency.label}}</strong> no qual a conta será <strong>debitada</strong> ou <strong>creditada</strong>.</p>
+          {% include "snippets/field_errors.html" with field=form.value %}
+        </div>
+  
+        <div class="col-sm-12 col-md-4">
+          <label for="{{form.date.id_for_label}}" class="form-label">Data </label>
+          {{form.date}}
+          <p class="form-text">Data de ocorrência</p>
+          {% include "snippets/field_errors.html" with field=form.date %}
+        </div>
+  
+      </div>
+  
+      <div class="my-3 text-center">
+        <button class="btn btn-primary" type="submit">Salvar</button>
+      </div>
+  
+    </form>
+
+  </div>
+
+</div>
+{% endblock %}

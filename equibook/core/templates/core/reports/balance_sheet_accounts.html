@@ -1,0 +1,50 @@
+{% extends "core/base.html" %}
+
+{% load humanize %}
+
+{% block head_title %}Contas Patrimoniais{% endblock %}
+
+{% block content %}
+
+<h1 class="p-4 text-center">Contas Patrimoniais</h1>
+
+{% include "core/snippets/period_warning.html" %}
+
+<section class="row">
+
+  <article
+    {% if DARK_MODE %}
+      class="col-md-5 offset-md-1 col-sm-12 px-0 bg-secondary bg-opacity-25 rounded mb-3"
+    {% else %}
+      class="col-md-5 offset-md-1 col-sm-12 px-0 shadow rounded mb-3"
+    {% endif %}
+  >
+    {% include "core/snippets/account_resume.html" with account=asset ul_size=60 %}
+  </article>
+
+  <article class="col-md-5 col-sm-12 mx-md-4">
+    <div class="row">
+      <article 
+      {% if DARK_MODE %}
+      class="col-12 px-0 bg-secondary bg-opacity-25 rounded mb-3"
+      {% else %}
+      class="col-12 px-0 shadow rounded mb-3"
+      {% endif %}
+      >
+        {% include "core/snippets/account_resume.html" with account=liability ul_size=25 %}
+      </article>
+      <article 
+      {% if DARK_MODE %}
+      class="col-12 px-0 bg-secondary bg-opacity-25 rounded"
+      {% else %}
+      class="col-12 px-0 shadow rounded"
+      {% endif %}
+      >
+        {% include "core/snippets/account_resume.html" with account=equity ul_size=25 %}
+      </article>
+    </div>
+  </article>
+
+</section>
+
+{% endblock %}

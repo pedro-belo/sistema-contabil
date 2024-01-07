@@ -1,0 +1,77 @@
+{% extends "core/base.html" %}
+
+{% load humanize %}
+
+{% load to_current_currency %}
+
+{% block head_title %}Transações Arquivadas{% endblock %}
+
+{% block content %}
+
+<h1 class="p-4 text-center">Transações Arquivadas</h1>
+
+<div class="row">
+  {% include "core/snippets/period_warning.html" %}
+
+  {% for transaction in transactions %}
+  <div class="col-12" id="{{transaction.detail.id}}">
+    <div class="card text-center my-4 {% if DARK_MODE %}bg-secondary bg-opacity-25 text-white border border-secondary{% else %}border-0 shadow{% endif %}">
+      <div class="card-header py-2 fs-5 fw-bold d-flex justify-content-between align-items-center" {% if DARK_MODE %}{% else %}bg-dark text-white{% endif %}>
+        {{transaction.detail.id}}: {{transaction.detail.title}}
+        <div>
+          <a class="btn btn-secondary bg-secondary bg-opacity-25" title="Detalhes Sobre a Transação"
+          href="{% url 'core:transaction-update' pk=transaction.detail.id %}">
+          <span class="material-icons-outlined">settings</span>
+        </a>
+        <a class="btn btn-secondary bg-secondary bg-opacity-25" title="Detalhes Sobre a Transação"
+          href="{% url 'core:transaction-detail' pk=transaction.detail.id %}">
+          <span class="material-icons-outlined">file_open</span>
+        </a>
+        </div>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-sm m-0 {% if DARK_MODE %}table-dark{% else %}{% endif %}">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Conta</th>
+                <th>Debito</th>
+                <th>Credito</th>
+                <th>D/C</th>
+                <th>Saldo</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for operation in transaction.detail.operations %}
+              <tr>
+                <td>{{operation.date}}</td>
+                <td>{{operation.account_name}}</td>
+                <td>{{operation.debit|to_current_currency:app_settings|intcomma}}</td>
+                <td>{{operation.credit|to_current_currency:app_settings|intcomma}}</td>
+                <td>{{operation.get_type_display}}</td>
+                <td>{{operation.account_balance|to_current_currency:app_settings|intcomma}} <span
+                    class="badge {% if DARK_MODE %}bg-secondary{% else %}bg-dark{% endif %}">{{app_settings.current_currency.label}}</span></td>
+              </tr>
+              {% endfor %}
+              <tr>
+                <td  colspan="3"></td>
+                <td >Σ = {{transaction.detail.debit_sum|to_current_currency:app_settings|intcomma}}</td>
+                <td >Σ = {{transaction.detail.credit_sum|to_current_currency:app_settings|intcomma}}</td>
+                <td  colspan="2"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <p class="text-center lead">
+    Você ainda não arquivou nenhuma transação.</p>
+  </p>
+
+  {% endfor %}
+</div>
+
+{% endblock %}

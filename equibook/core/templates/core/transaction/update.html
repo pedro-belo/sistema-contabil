@@ -1,0 +1,14 @@
+{% extends "core/base.html" %}
+
+{% block head_title %}Edição de Transação{% endblock %}
+
+{% block content %}
+
+<header class="mt-4 p-4 text-center">
+    <h1>Edição de Transação</h1>
+    <a class="text-dark" href="{% url 'core:transaction-detail' pk=form.instance.id %}">{{form.instance.title}}</a>
+</header>
+
+{% include "./form.html" %}
+
+{% endblock %}

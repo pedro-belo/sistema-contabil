@@ -1,0 +1,60 @@
+<!--
+    account, ul_size
+-->
+
+{% load to_current_currency %}
+
+{% load humanize %}
+
+<h2 
+  {% if DARK_MODE %}
+  class="bg-secondary bg-opacity-50 px-4 py-2 text-light d-flex justify-content-between rounded-top"
+  {% else %}
+  class="bg-primary px-4 py-2 text-light d-flex justify-content-between rounded-top"
+  {% endif %}
+  >
+    {{account.name}}
+    <a href="{% url 'core:account-create' parent_id=account.pk %}"
+    class="text-light border-0 mx-1" title="Novo desdobramento">
+    <span class="material-icons-outlined">create_new_folder</span>
+  </a>
+  </h2>
+
+  <ul class="p-0" style="height: {{ul_size}}vh; overflow-y: scroll;">
+    {% for account in account.account_set.all %}
+    <li class="my-1 p-2">
+      <div class="d-flex justify-content-between">
+        <a 
+          {% if DARK_MODE %}
+          class="text-decoration-none text-white d-flex"  
+          {% else %}
+          class="text-decoration-none text-dark d-flex"  
+          {% endif %}
+          href="{% url 'core:account-detail' pk=account.id %}">
+          <span class="material-icons-outlined">navigate_next</span>
+          <span class="fw-bold">{{account.name}}</span>
+        </a>
+      <span 
+      {% if DARK_MODE %}
+      class="text-end text-white"
+      {% else %}
+      class="text-end"
+      {% endif %}
+      >
+        {{account.total_account_balance|to_current_currency:app_settings|intcomma}}
+        <span 
+        {% if DARK_MODE %}
+        class="badge bg-dark"
+        {% else %}
+        class="badge bg-primary"
+        {% endif %}
+        >
+          {{app_settings.current_currency.label}}
+        </span></span>
+      </div>
+    </li>
+    {% empty %}
+    <li class="text-center">A conta <span class="fw-bold">{{account.name}}</span> ainda não possui nenhum desdobramento.</li>
+    {% endfor %}
+
+  </ul>

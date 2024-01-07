@@ -1,0 +1,58 @@
+<nav class="navbar navbar-expand-lg {% if DARK_MODE %}navbar-dark{% endif %}">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'core:balance-accounts' %}">EquiBook</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
+      aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarScroll">
+      <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle {% if view.balance_sheet_accounts_active or view.result_accounts_active %}active{% endif %}"
+            href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Contas
+          </a>
+          <ul class="dropdown-menu {% if DARK_MODE %}dropdown-menu-dark{% endif %}">
+            <li><a class="dropdown-item {% if view.balance_sheet_accounts_active %}active{% endif %}"
+                href="{% url 'core:balance-accounts' %}">Patrimoniais</a></li>
+            <li><a class="dropdown-item {% if view.result_accounts_active %}active{% endif %}"
+                href="{% url 'core:result-accounts' %}">Resultado</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle {% if view.archived_transaction_list_active or view.transaction_create_active or view.transaction_list_active %}active{% endif %}"
+            href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Transações
+          </a>
+          <ul class="dropdown-menu {% if DARK_MODE %}dropdown-menu dropdown-menu-dark{% endif %}">
+            <li><a class="dropdown-item {% if view.transaction_create_active %}active{% endif %}"
+                href="{% url 'core:transaction-create' %}">Novo</a></li>
+            <li><a class="dropdown-item {% if view.transaction_list_active %}active{% endif %}"
+                href="{% url 'core:transaction-list' %}">Lista</a></li>
+            <li><a class="dropdown-item {% if view.archived_transaction_list_active %}active{% endif %}"
+                href="{% url 'core:transaction-list-archived' %}">Arquivadas</a></li>
+          </ul>
+        </li>
+
+        {% if app_settings.defined_first_period %}
+        <li class="nav-item">
+          <a class="nav-link {% if view.accounting_period_detail_active %}active{% endif %}"
+            href="{% url 'core:accounting-period-detail' %}">Período Contábil</a>
+        </li>
+        {% endif %}
+
+      </ul>
+      <div class="d-flex" role="search">
+        <a class="btn btn-sm border-0 {% if DARK_MODE %}text-white{% endif %}" title="{{app_settings.entity}}"
+          href="{% url 'core:setting-update' %}">
+          <span class="material-icons-outlined">person</span>
+        </a>
+        <a class="btn btn-sm border-0 {% if DARK_MODE %}btn btn-sm border-0 text-white{% endif %}" title="Sair"
+          href="{% url  'users:logout' %}">
+          <span class="material-icons-outlined">logout</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
