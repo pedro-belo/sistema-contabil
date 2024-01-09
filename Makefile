@@ -2,8 +2,9 @@ SECRET_KEY=secret@123
 DEBUG=1
 USE_DEV_APPS=1
 ALLOWED_HOSTS=127.0.0.1, localhost
+CSRF_TRUSTED_ORIGINS=127.0.0.1, localhost
 STATIC_URL=static/
-STATIC_ROOT=
+STATIC_ROOT=static/
 MEDIA_URL=
 MEDIA_ROOT=media/
 CACHE_BACKEND=django.core.cache.backends.redis.RedisCache
@@ -22,6 +23,7 @@ create_env:
 	@echo "\n# SECURITY:" >> .env
 	@echo $(call env_line,SECRET_KEY,) >> .env
 	@echo $(call env_line,ALLOWED_HOSTS,) >> .env
+	@echo $(call env_line,CSRF_TRUSTED_ORIGINS,) >> .env
 
 	@echo "\n# DEV:" >> .env
 	@echo $(call env_line,DEBUG,) >> .env
