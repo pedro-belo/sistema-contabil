@@ -2,7 +2,7 @@ from equibook.core.tests import base
 from equibook.core import facade
 
 
-class TransactionDeleteViewTests(base.TestCase):
+class TransactionDeleteViewTestCase(base.TestCase):
     def setUp(self) -> None:
         self.user = base.create_default_user()
         self.period = base.create_period(self.user)
@@ -13,26 +13,19 @@ class TransactionDeleteViewTests(base.TestCase):
             value=100,
         )
 
+        self.url_delete = base.reverse(
+            "core:transaction-delete", args=[self.transaction.id]
+        )
+
     def test_get_authenticated(self):
         self.client.force_login(self.user)
-        response = self.client.get(
-            base.reverse("core:transaction-delete", args=[self.transaction.id])
-        )
+        response = self.client.get(self.url_delete)
         self.assertEqual(response.status_code, 404)
 
     def test_get_unauthenticated(self):
-        expected_url = (
-            base.reverse("users:login")
-            + "?next="
-            + base.reverse("core:transaction-delete", args=[self.transaction.id])
-        )
-
-        response = self.client.get(
-            base.reverse("core:transaction-delete", args=[self.transaction.id])
-        )
-
+        response = self.client.get(self.url_delete)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, expected_url)
+        self.assertEqual(response.url, base.url_login_next(self.url_delete))
 
     def test_delete_authenticated(self):
         self.client.force_login(self.user)
@@ -40,7 +33,7 @@ class TransactionDeleteViewTests(base.TestCase):
         self.assertEqual(facade.Transaction.objects.count(), 1)
 
         response = self.client.post(
-            base.reverse("core:transaction-delete", args=[self.transaction.id]),
+            self.url_delete,
             data={},
         )
 
@@ -50,7 +43,6 @@ class TransactionDeleteViewTests(base.TestCase):
         self.assertEqual(facade.Transaction.objects.count(), 0)
 
     def test_delete_authenticated_to_next_is_not_none(self):
-
         next = base.create_credts_and_debits(
             account=self.account, account_period=self.period, value=399
         )
@@ -59,10 +51,7 @@ class TransactionDeleteViewTests(base.TestCase):
 
         self.client.force_login(self.user)
 
-        response = self.client.post(
-            base.reverse("core:transaction-delete", args=[self.transaction.id]),
-            data={},
-        )
+        response = self.client.post(self.url_delete, data={})
 
         prev = facade.Transaction.objects.get(id=self.transaction.id)
         self.assertEqual(response.status_code, 404)
@@ -79,28 +68,14 @@ class TransactionDeleteViewTests(base.TestCase):
 
         self.assertEqual(facade.Transaction.objects.count(), 1)
 
-        response = self.client.post(
-            base.reverse("core:transaction-delete", args=[self.transaction.id]),
-            data={},
-        )
+        response = self.client.post(self.url_delete, data={})
 
         self.assertEqual(response.status_code, 404)
         self.assertEqual(facade.Transaction.objects.count(), 1)
 
     def test_delete_unauthenticated(self):
         self.assertEqual(facade.Transaction.objects.count(), 1)
-
-        expected_url = (
-            base.reverse("users:login")
-            + "?next="
-            + base.reverse("core:transaction-delete", args=[self.transaction.id])
-        )
-
-        response = self.client.post(
-            base.reverse("core:transaction-delete", args=[self.transaction.id]),
-            data={},
-        )
-
+        response = self.client.post(self.url_delete, data={})
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, expected_url)
+        self.assertEqual(response.url, base.url_login_next(self.url_delete))
         self.assertEqual(facade.Transaction.objects.count(), 1)
