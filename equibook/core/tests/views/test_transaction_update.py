@@ -12,6 +12,11 @@ class TransactionUpdateViewTests(base.TestCase):
             account_period=self.period,
             value=100,
         )
+
+        self.url_update = base.reverse(
+            "core:transaction-update", args=[self.transaction.id]
+        )
+
         self.form_data = {
             "title": f"{self.transaction.title}...",
             "description": f"{self.transaction.description}...",
@@ -20,32 +25,17 @@ class TransactionUpdateViewTests(base.TestCase):
 
     def test_get_authenticated(self):
         self.client.force_login(self.user)
-        response = self.client.get(
-            base.reverse("core:transaction-update", args=[self.transaction.id])
-        )
+        response = self.client.get(self.url_update)
         self.assertEqual(response.status_code, 200)
 
     def test_get_unauthenticated(self):
-        expected_url = (
-            base.reverse("users:login")
-            + "?next="
-            + base.reverse("core:transaction-update", args=[self.transaction.id])
-        )
-
-        response = self.client.get(
-            base.reverse("core:transaction-update", args=[self.transaction.id])
-        )
-
+        response = self.client.get(self.url_update)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, expected_url)
+        self.assertEqual(response.url, base.url_login_next(self.url_update))
 
     def test_update_authenticated(self):
         self.client.force_login(self.user)
-
-        response = self.client.post(
-            base.reverse("core:transaction-update", args=[self.transaction.id]),
-            data=self.form_data,
-        )
+        response = self.client.post(self.url_update, data=self.form_data)
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(
@@ -59,19 +49,9 @@ class TransactionUpdateViewTests(base.TestCase):
         self.assertEqual(updated.archived, self.form_data["archived"])
 
     def test_update_unauthenticated(self):
-        expected_url = (
-            base.reverse("users:login")
-            + "?next="
-            + base.reverse("core:transaction-update", args=[self.transaction.id])
-        )
-
-        response = self.client.post(
-            base.reverse("core:transaction-update", args=[self.transaction.id]),
-            data=self.form_data,
-        )
-
+        response = self.client.post(self.url_update, data=self.form_data)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, expected_url)
+        self.assertEqual(response.url, base.url_login_next(self.url_update))
 
         transaction = facade.Transaction.objects.get(pk=self.transaction.pk)
         self.assertEqual(transaction.title, self.transaction.title)
@@ -86,15 +66,13 @@ class TransactionUpdateViewTests(base.TestCase):
 
         self.client.force_login(self.user)
 
-        response = self.client.get(
-            base.reverse("core:transaction-update", args=[self.transaction.id])
-        )
+        response = self.client.get(self.url_update)
 
         self.assertEqual(response.status_code, 404)
 
     def test_update_authenticated_period_closed(self):
         """
-            Tentativa atulizar a transação de um período que já foi finalizado 
+        Tentativa atulizar a transação de um período que já foi finalizado
         """
         self.period.status = facade.AccountingPeriod.Status.CLOSED
         self.period.save()
@@ -103,10 +81,7 @@ class TransactionUpdateViewTests(base.TestCase):
 
         self.client.force_login(self.user)
 
-        response = self.client.post(
-            base.reverse("core:transaction-update", args=[self.transaction.id]),
-            data=self.form_data,
-        )
+        response = self.client.post(self.url_update, data=self.form_data)
 
         self.assertEqual(response.status_code, 404)
 
