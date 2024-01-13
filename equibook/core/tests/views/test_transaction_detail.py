@@ -1,7 +1,7 @@
 from equibook.core.tests import base
 
 
-class TransactionDetailViewTests(base.TestCase):
+class TransactionDetailViewTestCase(base.TestCase):
     def setUp(self) -> None:
         self.user = base.create_default_user()
         self.period = base.create_period(self.user)
