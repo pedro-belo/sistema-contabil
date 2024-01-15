@@ -10,10 +10,24 @@ class AccountingPeriodCreateFirstViewTestCase(base.TestCase):
             "end_date": "2023-01-31"
         }
 
-    def test_get_authenticated(self):
+    def test_get_authenticated_period_no_exists(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url_create)
         self.assertEqual(response.status_code, 200)
+
+    def _test_get_authenticated_period_exists(self, status):
+        base.facade.AccountingPeriod.objects.all().delete()
+        period = base.create_period(self.user)
+        period.status = status
+        period.save()
+
+        self.client.force_login(self.user)
+        response = self.client.get(self.url_create)
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_authenticated_and_period_exists(self):
+        for value in base.facade.AccountingPeriod.Status.values:
+            self._test_get_authenticated_period_exists(status=value)
 
     def test_get_unauthenticated(self):
         response = self.client.get(self.url_create)
@@ -40,9 +54,8 @@ class AccountingPeriodCreateFirstViewTestCase(base.TestCase):
 
     def test_create_unauthenticated(self):
         period_count = base.facade.AccountingPeriod.objects.count()
-        expected_url = base.reverse("users:login") + "?next=" + self.url_create
         response = self.client.post(self.url_create, self.form_data)
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, expected_url)
+        self.assertEqual(response.url, base.url_login_next(self.url_create))
         self.assertEqual(base.facade.AccountingPeriod.objects.count(), period_count)
