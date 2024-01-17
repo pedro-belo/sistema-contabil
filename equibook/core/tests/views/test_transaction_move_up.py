@@ -40,22 +40,14 @@ class TransactionDeleteViewTests(base.TestCase):
         self._test_post_authenticated(direction="down")
 
     def _test_get_unauthenticated(self, direction):
-        expected_url = (
-            base.reverse("users:login")
-            + "?next="
-            + base.reverse(
-                f"core:transaction-move-{direction}", args=[self.transactions[0].id]
-            )
+        url = base.reverse(
+            f"core:transaction-move-{direction}", args=[self.transactions[0].id]
         )
 
-        response = self.client.get(
-            base.reverse(
-                f"core:transaction-move-{direction}", args=[self.transactions[0].id]
-            )
-        )
+        response = self.client.get(url)
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, expected_url)
+        self.assertEqual(response.url, base.url_login_next(url))
 
     def test_get_unauthenticated_up(self):
         self._test_get_unauthenticated(direction="up")
@@ -70,13 +62,11 @@ class TransactionDeleteViewTests(base.TestCase):
         self.assertEqual(self.transactions[-1].previous.id, self.transactions[-2].id)
 
     def test_move_down(self):
-
         self.client.force_login(self.user)
 
         transaction_id = self.transactions[-1].id
 
-        for count in range(len(self.transactions) -2, -1, -1):
-
+        for count in range(len(self.transactions) - 2, -1, -1):
             response = self.client.get(
                 base.reverse("core:transaction-move-down", args=[transaction_id])
             )
@@ -88,13 +78,11 @@ class TransactionDeleteViewTests(base.TestCase):
             self.assertEqual(updated.next_id, self.transactions[count].id)
 
     def test_move_up(self):
-
         self.client.force_login(self.user)
 
         transaction_id = self.transactions[0].id
 
-        for count in range(2, len(self.transactions) -1):
-
+        for count in range(2, len(self.transactions) - 1):
             response = self.client.get(
                 base.reverse("core:transaction-move-up", args=[transaction_id])
             )
