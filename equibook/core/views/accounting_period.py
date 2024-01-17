@@ -27,10 +27,13 @@ class AccountingPeriodDetailView(base.FormView):
     accounting_period_detail_active = True
 
     def get_form_class(self):
-        if self.period.in_progress():
+
+        if self.period and self.period.in_progress():
             return base.AccountingPeriodCreateForm
-        if self.period.closing_accounts():
+
+        if self.period and self.period.closing_accounts():
             return base.AccountingPeriodCloseForm
+
         raise base.PageNotFound()
 
     def _get_form_kwargs_in_progress(self):

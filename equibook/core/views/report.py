@@ -20,7 +20,7 @@ class BalanceAccountsView(BalanceOrResultAccountsView):
         return facade.get_balance_accounts(user)
 
 
-class ResultsView(BalanceOrResultAccountsView):
+class ResultAccountsView(BalanceOrResultAccountsView):
     template_name = "core/reports/result_accounts.html"
     result_accounts_active = True
 
@@ -56,7 +56,7 @@ url_patterns = [
     ),
     base.path(
         "result-accounts/",
-        ResultsView.as_view(),
+        ResultAccountsView.as_view(),
         name="result-accounts",
     ),
 ]
