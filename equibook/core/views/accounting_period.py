@@ -85,7 +85,7 @@ class AccountingPeriodDetailView(base.FormView):
 
     @base.atomic
     def form_valid(self, form):
-        if self.period.in_progress():
+        if self.period.in_progress() and self.period.is_period_closeable():
             return self._form_valid_in_progress(form)
 
         if self.period.closing_accounts():

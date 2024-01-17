@@ -23,7 +23,7 @@ def accounting_period_close_accounts(period, form):
     try:
         previous = transactions.get(next=None)
     except base.Transaction.DoesNotExist:
-        raise ValueError("O período não possui nenhum lançamento.")
+        return
 
     transaction = base.Transaction()
     transaction.period = period
@@ -87,7 +87,7 @@ def accounting_period_distribute_results(period, form: base.AccountingPeriodClos
     try:
         previous = transactions.get(next=None)
     except base.Transaction.DoesNotExist:
-        raise ValueError("O período não possui nenhum lançamento.")
+        return
 
     transaction = base.Transaction()
     transaction.period = period
