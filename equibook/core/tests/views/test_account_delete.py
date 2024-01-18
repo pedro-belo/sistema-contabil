@@ -2,7 +2,7 @@ from equibook.core.tests import base
 from equibook.core import facade
 
 
-class AccountDeleteViewTests(base.TestCase):
+class AccountDeleteViewTestCase(base.TestCase):
     def setUp(self) -> None:
         self.user = base.create_default_user()
         self.accounts = base.create_children_accounts(self.user)
