@@ -1,4 +1,5 @@
 from django.urls import reverse
+from decimal import Decimal
 from django.test import TestCase, override_settings
 from time import time
 from equibook.core import facade
@@ -6,6 +7,7 @@ from equibook.users.models import User
 from model_bakery import baker
 from datetime import date, timedelta, datetime
 from django.core.files.uploadedfile import SimpleUploadedFile
+
 
 def create_default_user(**kwargs):
     user = baker.make(User, **kwargs)
@@ -17,6 +19,7 @@ def create_default_user(**kwargs):
         },
     )
     return user
+
 
 def create_children_accounts(user):
     acc1 = facade.Account.objects.get_asset(user)
@@ -35,6 +38,50 @@ def create_children_accounts(user):
     return acc1, acc2, acc3
 
 
+def create_debit_and_credit(
+    period: facade.AccountingPeriod,
+    debit: facade.Account,
+    credit: facade.Account,
+    value: Decimal,
+    repeat: int = 1,
+) -> facade.Transaction:
+    if (debit is None) and (credit is None):
+        raise ValueError
+
+    if (debit and credit) and (debit.id == credit.id):
+        raise ValueError
+
+    form_data = {
+        "title": f"T-{time()}",
+        "description": f"D-{time()}",
+        "account_period": period,
+    }
+
+    transaction = facade.create_transaction(user=period.user, form_data=form_data)
+
+    for _ in range(0, repeat):
+        if credit is not None:
+            facade.Operation.objects.create(
+                transaction=transaction,
+                account=credit,
+                value=value,
+                type=facade.OperationType.CREDIT,
+                date=date.today(),
+            )
+
+        if debit is not None:
+            facade.Operation.objects.create(
+                transaction=transaction,
+                account=debit,
+                value=value,
+                type=facade.OperationType.DEBIT,
+                date=date.today(),
+            )
+
+    return transaction
+
+
+# TODO: Remove todas as chamadas
 def create_credts_and_debits(
     account: facade.Account,
     account_period: facade.AccountingPeriod,
@@ -43,49 +90,26 @@ def create_credts_and_debits(
     debit=True,
     reperat=1,
 ):
-    transaction = facade.create_transaction(
-        user=account.user,
-        form_data={
-            "title": f"T-{time()}",
-            "description": f"D-{time()}",
-            "account_period": account_period,
-        },
-    )
+    raise Exception("REMOVER")
 
-    for _ in range(0, reperat):
-        if credit:
-            facade.Operation.objects.create(
-                transaction=transaction,
-                account=account,
-                value=value,
-                type=facade.OperationType.CREDIT,
-                date=date.today(),
-            )
-        if debit:
-            facade.Operation.objects.create(
-                transaction=transaction,
-                account=account,
-                value=value,
-                type=facade.OperationType.DEBIT,
-                date=date.today(),
-            )
 
-    return transaction
-
-def create_period(user):
-    start = date(year=2024, month=1, day=31)
-    end = date(year=2024, month=2, day=29)
+def create_period(user, **kwargs):
     return facade.AccountingPeriod.objects.create(
         user=user,
-        start_date=start,
-        end_date=end,
-        status=facade.AccountingPeriod.Status.IN_PROGRESS,
+        start_date=kwargs.get("start_date", date(year=2024, month=1, day=31)),
+        end_date=kwargs.get("end_date", date(year=2024, month=2, day=29)),
+        status=kwargs.get("status", facade.AccountingPeriod.Status.IN_PROGRESS),
     )
+
 
 def create_uploadfile(name):
     return SimpleUploadedFile(
-            name=name,
-            content=b"The acidity of the ketchup and sweetness of the sauce blend together giving \
+        name=name,
+        content=b"The acidity of the ketchup and sweetness of the sauce blend together giving \
                 it the soul warming feel of home cooking!",
-            content_type="text/plain",
-        )
+        content_type="text/plain",
+    )
+
+
+def url_login_next(next: str):
+    return reverse("users:login") + "?next=" + next
