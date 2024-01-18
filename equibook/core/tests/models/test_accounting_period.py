@@ -25,7 +25,6 @@ class AccountModelTestCase(base.TestCase):
     def test_start_date_dmy(self):
         d = self.period.start_date.strftime("%d/%m/%Y")
         self.assertEqual(self.period.start_date_dmy(), d)
-        
 
     def test_end_date_dmy(self):
         d = self.period.end_date.strftime("%d/%m/%Y")
