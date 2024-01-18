@@ -1,4 +1,5 @@
 from equibook.core.tests import base
+from equibook.core import facade
 
 
 class AccountingPeriodDetailViewTestCase(base.TestCase):
@@ -38,7 +39,11 @@ class AccountingPeriodDetailViewTestCase(base.TestCase):
             ),
         }
 
-    def test_get_authenticated_no_period(self):
+    def _test_redirect_to_url_detail(self, response):
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, self.url_detail)
+
+    def test_get_authenticated_ne_period(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url_detail)
         self.assertEqual(response.status_code, 404)
@@ -63,7 +68,7 @@ class AccountingPeriodDetailViewTestCase(base.TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, base.url_login_next(self.url_detail))
 
-    def test_try_close_period_today(self):
+    def test_try_close_period_in_progress_d0(self):
         base.create_period(
             self.user,
             start_data=base.date.today(),
@@ -73,7 +78,7 @@ class AccountingPeriodDetailViewTestCase(base.TestCase):
         response = self.client.post(self.url_detail)
         self.assertEqual(response.status_code, 404)
 
-    def test_close_period_in_progress(self):
+    def test_try_close_period_in_progress_dm1(self):
         yesterday = base.date.today() - base.timedelta(days=1)
         period = base.create_period(
             self.user,
@@ -85,20 +90,14 @@ class AccountingPeriodDetailViewTestCase(base.TestCase):
         self.client.force_login(self.user)
 
         response = self.client.post(self.url_detail)
-
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, self.url_detail)
+        self._test_redirect_to_url_detail(response)
 
         period = base.facade.AccountingPeriod.objects.get(pk=period.pk)
         self.assertEqual(
             period.status, base.facade.AccountingPeriod.Status.CLOSING_ACCOUNTS
         )
 
-    def _test_redirect_to_url_detail(self, response):
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, self.url_detail)
-
-    def test_close_period_in_closing_accounts_and_transactions_none(self):
+    def test_close_period_and_transactions_count_eq_0(self):
         period, form_data = self.prepare_closing_accounts()
         self.client.force_login(self.user)
 
@@ -112,44 +111,52 @@ class AccountingPeriodDetailViewTestCase(base.TestCase):
         next_p = base.facade.AccountingPeriod.objects.get(pk=period.pk + 1)
         self.assertEqual(next_p.status, base.facade.AccountingPeriod.Status.IN_PROGRESS)
 
-    def test_close_period_in_closing_accounts_and_transactions_despesas(self):
+    def test_close_period_despesas(self):
         period, form_data = self.prepare_closing_accounts()
         self.client.force_login(self.user)
 
-        account = base.facade.create_account(
+        _, _, debit = base.create_children_accounts(
             user=self.user,
-            parent=base.facade.Account.objects.get_expense(self.user),
-            form_data={"name": "Despesas Gerais"},
+            root=facade.Account.objects.get_expense(self.user),
         )
 
-        _ = base.create_credts_and_debits(
-            account=account, account_period=period, value=25, reperat=2, credit=False
+        _, _, credit = base.create_children_accounts(
+            user=self.user,
+            root=facade.Account.objects.get_asset(self.user),
         )
 
-        self.assertEqual(account.get_individual_balance(), 50)
+        _ = base.create_debit_and_credit(
+            period=period, value=50, debit=debit, credit=credit
+        )
+
+        self.assertEqual(debit.get_individual_balance(), 50)
 
         response = self.client.post(self.url_detail, data=form_data)
         self._test_redirect_to_url_detail(response)
 
-        self.assertEqual(account.get_individual_balance(), 0)
+        self.assertEqual(debit.get_individual_balance(), 0)
 
-    def test_close_period_in_closing_accounts_and_transactions_receitas(self):
+    def test_close_period_receitas(self):
         period, form_data = self.prepare_closing_accounts()
         self.client.force_login(self.user)
 
-        account = base.facade.create_account(
+        _, _, debit = base.create_children_accounts(
             user=self.user,
-            parent=base.facade.Account.objects.get_revenue(self.user),
-            form_data={"name": "Proventos"},
+            root=facade.Account.objects.get_asset(self.user),
         )
 
-        _ = base.create_credts_and_debits(
-            account=account, account_period=period, value=50, debit=False
+        _, _, credit = base.create_children_accounts(
+            user=self.user,
+            root=facade.Account.objects.get_revenue(self.user),
         )
 
-        self.assertEqual(account.get_individual_balance(), 50)
+        _ = base.create_debit_and_credit(
+            period=period, value=50, debit=debit, credit=credit
+        )
+
+        self.assertEqual(credit.get_individual_balance(), 50)
 
         response = self.client.post(self.url_detail, data=form_data)
         self._test_redirect_to_url_detail(response)
 
-        self.assertEqual(account.get_individual_balance(), 0)
+        self.assertEqual(credit.get_individual_balance(), 0)
