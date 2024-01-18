@@ -3,6 +3,9 @@ from equibook.core.facade import base
 
 @base.atomic
 def create_first_account_period(user: base.User, form_data: dict):
+    if form_data["end_date"] < form_data["start_date"]:
+        raise ValueError("Data final do período deve ser maior ou igual a data inicial")
+
     accounting_period = base.AccountingPeriod()
     accounting_period.status = base.AccountingPeriod.Status.IN_PROGRESS
     accounting_period.user = user
@@ -15,6 +18,50 @@ def create_first_account_period(user: base.User, form_data: dict):
     setting.save()
 
     return accounting_period
+
+
+def _accounting_period_close_accounts_revenue(
+    result: base.Account, revenue: base.Account, transaction: base.Transaction
+):
+    # "Zerando" saldo da conta de Receita (revenue)
+    revenue_balance = revenue.get_individual_balance()
+    operation = base.Operation()
+    operation.transaction = transaction
+    operation.account = revenue
+    operation.value = revenue_balance
+    operation.type = base.OperationType.DEBIT
+    operation.date = base.timezone.now()
+    operation.save()
+
+    # Transferência do saldo da conta de Receita para a conta de Resultado.
+    operation = base.Operation()
+    operation.transaction = transaction
+    operation.account = result
+    operation.value = revenue_balance
+    operation.type = base.OperationType.CREDIT
+    operation.date = base.timezone.now()
+    operation.save()
+
+
+def _accounting_period_close_accounts_expense(
+    result: base.Account, expense: base.Account, transaction: base.Transaction
+):
+    expense_balance = expense.get_individual_balance()
+    operation = base.Operation()
+    operation.transaction = transaction
+    operation.account = expense
+    operation.value = expense_balance
+    operation.type = base.OperationType.CREDIT
+    operation.date = base.timezone.now()
+    operation.save()
+
+    operation = base.Operation()
+    operation.transaction = transaction
+    operation.account = result
+    operation.value = expense_balance
+    operation.type = base.OperationType.DEBIT
+    operation.date = base.timezone.now()
+    operation.save()
 
 
 def accounting_period_close_accounts(period, form):
@@ -38,46 +85,21 @@ def accounting_period_close_accounts(period, form):
 
     result = base.Account.objects.get_result(period.user)
 
-    # Encerramento de receitas
-    revenue_ac = base.Account.objects.get_revenue(period.user)
-    for revenue in revenue_ac.get_recursive_childrens(period):
-        # Fechando...
-        operation = base.Operation()
-        operation.transaction = transaction
-        operation.account = revenue.account
-        operation.value = revenue.value
-        operation.type = base.OperationType.DEBIT
-        operation.date = base.timezone.now()
-        operation.save()
+    revenue_root = base.Account.objects.get_revenue(period.user)
+    for revenue in revenue_root.get_children():
+        _accounting_period_close_accounts_revenue(
+            result=result,
+            revenue=revenue,
+            transaction=transaction,
+        )
 
-        # Transferindo saldo
-        operation = base.Operation()
-        operation.transaction = transaction
-        operation.account = result
-        operation.value = revenue.value
-        operation.type = base.OperationType.CREDIT
-        operation.date = base.timezone.now()
-        operation.save()
-
-    expenses_ac = base.Account.objects.get_expense(period.user)
-    for expenses in expenses_ac.get_recursive_childrens(period):
-        # Fechando...
-        operation = base.Operation()
-        operation.transaction = transaction
-        operation.account = expenses.account
-        operation.value = expenses.value
-        operation.type = base.OperationType.CREDIT
-        operation.date = base.timezone.now()
-        operation.save()
-
-        # Transferindo saldo
-        operation = base.Operation()
-        operation.transaction = transaction
-        operation.account = result
-        operation.value = expenses.value
-        operation.type = base.OperationType.DEBIT
-        operation.date = base.timezone.now()
-        operation.save()
+    expense_root = base.Account.objects.get_expense(period.user)
+    for expense in expense_root.get_children():
+        _accounting_period_close_accounts_expense(
+            result=result,
+            expense=expense,
+            transaction=transaction,
+        )
 
 
 def accounting_period_distribute_results(period, form: base.AccountingPeriodCloseForm):
