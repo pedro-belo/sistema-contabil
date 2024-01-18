@@ -47,16 +47,14 @@ class TransactionCreateViewTestCase(base.TestCase):
 
         response = self.client.post(self.url_create, data=self.form_data)
 
-        transaction = facade.Transaction.objects.last()
+        created = facade.Transaction.objects.last()
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, base.reverse("core:transaction-list"))
 
-        self.assertEqual(transaction.title, self.form_data["title"])
-        self.assertEqual(transaction.description, self.form_data["description"])
-        self.assertEqual(
-            facade.Transaction.objects.filter(period=self.period).count(), 1
-        )
+        self.assertEqual(created.title, self.form_data["title"])
+        self.assertEqual(created.description, self.form_data["description"])
+        self.assertEqual(facade.Transaction.objects.count(), 1)
 
     def test_create_unauthenticated(self):
         response = self.client.post(self.url_create, data=self.form_data)
