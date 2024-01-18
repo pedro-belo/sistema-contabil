@@ -5,17 +5,14 @@ class AccountingPeriodCreateFirstViewTestCase(base.TestCase):
     def setUp(self) -> None:
         self.user = base.create_default_user()
         self.url_create = base.reverse("core:accounting-period-create")
-        self.form_data = {
-            "start_date": "2023-01-01",
-            "end_date": "2023-01-31"
-        }
+        self.form_data = {"start_date": "2023-01-01", "end_date": "2023-01-31"}
 
-    def test_get_authenticated_period_no_exists(self):
+    def test_get_authenticated_ne_period(self):
         self.client.force_login(self.user)
         response = self.client.get(self.url_create)
         self.assertEqual(response.status_code, 200)
 
-    def _test_get_authenticated_period_exists(self, status):
+    def _test_get_authenticated_and_period_exists(self, status):
         base.facade.AccountingPeriod.objects.all().delete()
         period = base.create_period(self.user)
         period.status = status
@@ -27,14 +24,12 @@ class AccountingPeriodCreateFirstViewTestCase(base.TestCase):
 
     def test_get_authenticated_and_period_exists(self):
         for value in base.facade.AccountingPeriod.Status.values:
-            self._test_get_authenticated_period_exists(status=value)
+            self._test_get_authenticated_and_period_exists(status=value)
 
     def test_get_unauthenticated(self):
         response = self.client.get(self.url_create)
-        expected_url = base.reverse("users:login") + "?next=" + self.url_create
-
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, expected_url)
+        self.assertEqual(response.url, base.url_login_next(self.url_create))
 
     def test_create_authenticated(self):
         period_count = base.facade.AccountingPeriod.objects.count()
@@ -46,11 +41,13 @@ class AccountingPeriodCreateFirstViewTestCase(base.TestCase):
         self.assertEqual(response.url, base.reverse("core:balance-accounts"))
 
         created = base.facade.AccountingPeriod.objects.last()
-
-        self.assertEqual(created.start_date.strftime("%Y-%m-%d"), self.form_data["start_date"])
-        self.assertEqual(created.end_date.strftime("%Y-%m-%d"), self.form_data["end_date"])
+        self.assertEqual(
+            created.start_date.strftime("%Y-%m-%d"), self.form_data["start_date"]
+        )
+        self.assertEqual(
+            created.end_date.strftime("%Y-%m-%d"), self.form_data["end_date"]
+        )
         self.assertEqual(base.facade.AccountingPeriod.objects.count(), period_count + 1)
-
 
     def test_create_unauthenticated(self):
         period_count = base.facade.AccountingPeriod.objects.count()
