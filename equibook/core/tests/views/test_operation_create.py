@@ -1,20 +1,16 @@
 from equibook.core.tests import base
 from equibook.core import facade
-from decimal import Decimal
 
 
 class OperationCreateViewTestCase(base.TestCase):
     def setUp(self) -> None:
         self.user = base.create_default_user()
         self.period = base.create_period(self.user)
-        _, _, self.account = base.create_children_accounts(self.user)
 
-        self.form_data = {
-            "account": self.account.id,
-            "type": facade.OperationType.DEBIT,
-            "value": "10",
-            "date": self.period.start_date.strftime("%d/%m/%Y"),
-        }
+        _, self.account, _ = base.create_children_accounts(
+            user=self.user,
+            root=facade.Account.objects.get_asset(self.user),
+        )
 
         self.transaction = facade.create_transaction(
             user=self.user,
@@ -24,6 +20,14 @@ class OperationCreateViewTestCase(base.TestCase):
                 "account_period": self.period,
             },
         )
+
+        self.form_data = {
+            "account": self.account.id,
+            "type": facade.OperationType.DEBIT,
+            "value": "10",
+            "date": self.period.start_date.strftime("%d/%m/%Y"),
+        }
+
         self.url_create = base.reverse(
             "core:operation-create", args=[self.transaction.id]
         )
@@ -44,13 +48,13 @@ class OperationCreateViewTestCase(base.TestCase):
         self.assertEqual(facade.Operation.objects.count(), 0)
 
         response = self.client.post(self.url_create, data=self.form_data)
-
-        created = facade.Operation.objects.last()
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, base.reverse("core:transaction-list"))
+
+        created = facade.Operation.objects.last()
         self.assertEqual(created.account_id, self.account.id)
         self.assertEqual(created.type, self.form_data["type"])
-        self.assertEqual(created.value, Decimal(self.form_data["value"]))
+        self.assertEqual(created.value, base.Decimal(self.form_data["value"]))
 
         self.assertEqual(created.date.day, self.period.start_date.day)
         self.assertEqual(created.date.month, self.period.start_date.month)
