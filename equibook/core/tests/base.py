@@ -21,8 +21,8 @@ def create_default_user(**kwargs):
     return user
 
 
-def create_children_accounts(user):
-    acc1 = facade.Account.objects.get_asset(user)
+def create_children_accounts(user, root: facade.Account = None):
+    acc1 = root if root else facade.Account.objects.get_asset(user)
 
     acc2 = facade.create_account(
         user=user,
@@ -40,9 +40,9 @@ def create_children_accounts(user):
 
 def create_debit_and_credit(
     period: facade.AccountingPeriod,
-    debit: facade.Account,
-    credit: facade.Account,
     value: Decimal,
+    debit: facade.Account = None,
+    credit: facade.Account = None,
     repeat: int = 1,
 ) -> facade.Transaction:
     if (debit is None) and (credit is None):
