@@ -2,7 +2,7 @@ from equibook.core.tests import base
 from equibook.core import facade
 
 
-class AccountCreateViewTests(base.TestCase):
+class AccountCreateViewTestCase(base.TestCase):
     def setUp(self) -> None:
         self.user = base.create_default_user()
         self.account = facade.Account.objects.get_equity(self.user)
