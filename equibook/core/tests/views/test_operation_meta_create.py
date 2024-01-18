@@ -6,12 +6,18 @@ class OperationMetaCreateViewTestCase(base.TestCase):
     def setUp(self) -> None:
         self.user = base.create_default_user()
         self.period = base.create_period(self.user)
-        _, _, self.account = base.create_children_accounts(self.user)
 
-        self.transaction = base.create_credts_and_debits(
-            account=self.account, account_period=self.period, value=10, credit=False
+        _, _, debit = base.create_children_accounts(
+            user=self.user,
+            root=facade.Account.objects.get_asset(self.user),
         )
+
+        self.transaction = base.create_debit_and_credit(
+            period=self.period, value=10, debit=debit
+        )
+
         self.operation = self.transaction.transaction_operation.first()
+
         self.url_create = base.reverse(
             "core:operation-meta-create", args=[self.operation.id]
         )
@@ -42,17 +48,14 @@ class OperationMetaCreateViewTestCase(base.TestCase):
 
         self.assertEqual(facade.OperationMeta.objects.count(), 0)
 
-        response = self.client.post(
-            self.url_create,
-            data=self.form_data,
-        )
-        created = facade.OperationMeta.objects.last()
-
+        response = self.client.post(self.url_create, data=self.form_data)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(
             response.url,
             base.reverse("core:transaction-detail", args=[self.transaction.id]),
         )
+
+        created = facade.OperationMeta.objects.last()
         self.assertEqual(created.description, self.form_data["description"])
         self.assertTrue(created.document.name.startswith(self.document_name))
         self.assertEqual(created.document.read(), self.document_content)
