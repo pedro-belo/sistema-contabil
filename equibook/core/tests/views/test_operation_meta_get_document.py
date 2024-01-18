@@ -7,10 +7,14 @@ class OperationMetaGetDocumentViewTestCase(base.TestCase):
     def setUp(self) -> None:
         self.user = base.create_default_user()
         self.period = base.create_period(self.user)
-        _, _, self.account = base.create_children_accounts(self.user)
 
-        self.transaction = base.create_credts_and_debits(
-            account=self.account, account_period=self.period, value=10, credit=False
+        _, _, debit = base.create_children_accounts(
+            user=self.user,
+            root=facade.Account.objects.get_asset(self.user),
+        )
+
+        self.transaction = base.create_debit_and_credit(
+            period=self.period, value=10, debit=debit
         )
 
         self.operation = self.transaction.transaction_operation.first()
