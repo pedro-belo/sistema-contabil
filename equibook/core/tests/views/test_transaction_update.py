@@ -6,11 +6,14 @@ class TransactionUpdateViewTests(base.TestCase):
     def setUp(self) -> None:
         self.user = base.create_default_user()
         self.period = base.create_period(self.user)
-        _, _, self.account = base.create_children_accounts(self.user)
-        self.transaction = base.create_credts_and_debits(
-            account=self.account,
-            account_period=self.period,
-            value=100,
+
+        _, debit, credit = base.create_children_accounts(
+            user=self.user,
+            root=facade.Account.objects.get_asset(self.user),
+        )
+
+        self.transaction = base.create_debit_and_credit(
+            period=self.period, value=100, debit=debit, credit=credit
         )
 
         self.url_update = base.reverse(
@@ -50,6 +53,7 @@ class TransactionUpdateViewTests(base.TestCase):
 
     def test_update_unauthenticated(self):
         response = self.client.post(self.url_update, data=self.form_data)
+
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, base.url_login_next(self.url_update))
 
@@ -71,9 +75,6 @@ class TransactionUpdateViewTests(base.TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_update_authenticated_period_closed(self):
-        """
-        Tentativa atulizar a transação de um período que já foi finalizado
-        """
         self.period.status = facade.AccountingPeriod.Status.CLOSED
         self.period.save()
 
