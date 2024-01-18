@@ -2,9 +2,7 @@ from equibook.core.facade import base
 
 
 @base.atomic
-def accounting_period_create(
-    user: base.User, form_data: dict
-):
+def create_first_account_period(user: base.User, form_data: dict):
     accounting_period = base.AccountingPeriod()
     accounting_period.status = base.AccountingPeriod.Status.IN_PROGRESS
     accounting_period.user = user

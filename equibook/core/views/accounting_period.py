@@ -12,7 +12,7 @@ class AccountingPeriodCreateFirstView(base.FormView):
         return base.AccountingPeriodCreateFirstForm
 
     def form_valid(self, form: base.AccountingPeriodCreateFirstForm):
-        facade.accounting_period_create(
+        facade.create_first_account_period(
             user=self.request.user,
             form_data=form.cleaned_data,
         )

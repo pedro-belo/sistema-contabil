@@ -36,7 +36,7 @@ from .reports import (  # NOQA
 from .user import user_setup, user_has_period  # NOQA
 
 from .accounting_period import (  # NOQA
-    accounting_period_create,
+    create_first_account_period,
     accounting_period_close_accounts,
     accounting_period_distribute_results,
     accounting_period_close_period,
