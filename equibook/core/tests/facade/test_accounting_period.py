@@ -22,7 +22,7 @@ class AccountingPeriodCloseAccountsTestCase(base.TestCase):
         facade.accounting_period_close_accounts(self.period, form={})
         self.assertEqual(facade.Transaction.objects.count(), 0)
 
-    def test_saldo_receita(self):
+    def test_revenue_balance(self):
         _, asset, _ = base.create_children_accounts(user=self.user, root=self.asset)
 
         _, _, revenue = base.create_children_accounts(
@@ -39,7 +39,7 @@ class AccountingPeriodCloseAccountsTestCase(base.TestCase):
         facade.accounting_period_close_accounts(self.period, form={})
         self.assertEqual(revenue.get_individual_balance(), 0)
 
-    def test_saldo_despesa(self):
+    def test_expense_balance(self):
         _, asset, _ = base.create_children_accounts(user=self.user, root=self.asset)
 
         _, _, expense = base.create_children_accounts(
