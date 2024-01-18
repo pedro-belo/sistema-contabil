@@ -12,7 +12,11 @@ class AccountingPeriodCreateFirstView(base.FormView):
         return base.AccountingPeriodCreateFirstForm
 
     def form_valid(self, form: base.AccountingPeriodCreateFirstForm):
-        facade.accounting_period_create(user=self.request.user, form=form)
+        facade.accounting_period_create(
+            user=self.request.user,
+            form_data=form.cleaned_data,
+        )
+
         base.messages.add_message(
             request=self.request,
             level=base.messages.SUCCESS,
@@ -27,7 +31,6 @@ class AccountingPeriodDetailView(base.FormView):
     accounting_period_detail_active = True
 
     def get_form_class(self):
-
         if self.period and self.period.in_progress():
             return base.AccountingPeriodCreateForm
 

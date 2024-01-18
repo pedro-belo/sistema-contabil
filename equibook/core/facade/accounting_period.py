@@ -3,11 +3,13 @@ from equibook.core.facade import base
 
 @base.atomic
 def accounting_period_create(
-    user: base.User, form: base.AccountingPeriodCreateFirstForm
+    user: base.User, form_data: dict
 ):
-    accounting_period = form.save(commit=False)
+    accounting_period = base.AccountingPeriod()
     accounting_period.status = base.AccountingPeriod.Status.IN_PROGRESS
     accounting_period.user = user
+    accounting_period.start_date = form_data["start_date"]
+    accounting_period.end_date = form_data["end_date"]
     accounting_period.save()
 
     setting = base.Setting.objects.get(user=user)
