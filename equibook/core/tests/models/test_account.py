@@ -19,14 +19,14 @@ class AccountModelTestCase(base.TestCase):
         for account in root_accounts:
             self.assertEqual(account.can_remove(), False)
 
-    def test_can_remove_father_account(self):
+    def test_can_remove_parent_account(self):
         """
         ACC2 é "pai" da conta ACC3
         """
-        _, acc1, _ = base.create_children_accounts(self.user)
-        self.assertEqual(acc1.can_remove(), False)
+        _, account, _ = base.create_children_accounts(self.user)
+        self.assertEqual(account.can_remove(), False)
 
-    def test_can_delete_when_exists_operations(self):
+    def test_can_delete_if_the_account_has_operation(self):
         _, _, account = base.create_children_accounts(self.user)
         base.baker.make(facade.Operation, account=account)
         self.assertEqual(account.can_remove(), False)
