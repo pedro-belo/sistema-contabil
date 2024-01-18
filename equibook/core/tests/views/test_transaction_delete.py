@@ -57,7 +57,6 @@ class TransactionDeleteViewTestCase(base.TestCase):
         self.assertEqual(prev.next_id, next.id)
         self.assertEqual(facade.Transaction.objects.count(), 2)
 
-    """
     def test_delete_authenticated_period_closed(self):
         self.period.status = facade.AccountingPeriod.Status.CLOSED
         self.period.save()
@@ -75,9 +74,9 @@ class TransactionDeleteViewTestCase(base.TestCase):
 
     def test_delete_unauthenticated(self):
         self.assertEqual(facade.Transaction.objects.count(), 1)
+
         response = self.client.post(self.url_delete, data={})
+
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, base.url_login_next(self.url_delete))
         self.assertEqual(facade.Transaction.objects.count(), 1)
-
-    """
