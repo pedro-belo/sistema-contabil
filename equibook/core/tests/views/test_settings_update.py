@@ -1,6 +1,5 @@
 from equibook.core.tests import base
 from equibook.core import facade
-from decimal import Decimal
 
 
 class SettingUpdateViewTestCase(base.TestCase):
@@ -51,7 +50,7 @@ class SettingUpdateViewTestCase(base.TestCase):
         self.assertEqual(setting.theme, self.form_data["theme"])
         self.assertEqual(
             setting.exchange_rate,
-            Decimal(self.form_data["exchange_rate"]),
+            base.Decimal(self.form_data["exchange_rate"]),
         )
         self.client.force_login(self.user)
 
