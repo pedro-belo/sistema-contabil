@@ -2,6 +2,51 @@ from equibook.core.tests import base
 from equibook.core import facade
 
 
+class AccountingPeriodCloseAccountsTestCase(base.TestCase):
+    def setUp(self) -> None:
+        self.user = base.create_default_user()
+        self.period = base.create_period(
+            self.user, status=facade.AccountingPeriod.Status.CLOSING_ACCOUNTS
+        )
+
+    def test_no_transactions(self):
+        facade.accounting_period_close_accounts(self.period, form={})
+        self.assertEqual(facade.Transaction.objects.count(), 0)
+
+    def test_receita(self):
+        _, asset_d, asset_c = base.create_children_accounts(
+            user=self.user,
+            root=facade.Account.objects.get_asset(self.user),
+        )
+
+        _, _, revenue = base.create_children_accounts(
+            user=self.user,
+            root=facade.Account.objects.get_revenue(self.user),
+        )
+
+        # Aumenta Receita
+        base.create_debit_and_credit(
+            self.period,
+            value=10,
+            debit=asset_d,
+            credit=revenue,
+        )
+        self.assertEqual(revenue.get_individual_balance(), 10)
+
+        # Diminui Receita
+        base.create_debit_and_credit(
+            self.period,
+            value=5,
+            debit=revenue,
+            credit=asset_c,
+        )
+        self.assertEqual(revenue.get_individual_balance(), 5)
+
+        # Receita encerrada (saldo=0)
+        facade.accounting_period_close_accounts(self.period, form={})
+        self.assertEqual(revenue.get_individual_balance(), 0)
+
+
 class CreateFirstAccountPeriodTestCase(base.TestCase):
     def setUp(self) -> None:
         self.user = base.create_default_user()
