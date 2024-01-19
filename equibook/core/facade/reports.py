@@ -29,18 +29,6 @@ class TrialBalanceItemData:
             case _:
                 raise ValueError("Invalid")
 
-    def balance_undef(self, expected):
-        credit_sum = sum(self.credit)
-        debit_sum = sum(self.debit)
-
-        if expected == base.TypeOfBalance.DEBIT and debit_sum > credit_sum:
-            return debit_sum - credit_sum
-
-        if expected == base.TypeOfBalance.CREDIT and credit_sum > credit_sum:
-            return credit_sum - debit_sum
-
-        return 0
-
     def balance_credit(self):
         return (
             self.balance()
