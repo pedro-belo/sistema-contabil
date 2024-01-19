@@ -2,6 +2,133 @@ from equibook.core.tests import base
 from equibook.core import facade
 
 
+class AccountingPeriodDistributeResultsTestCase(base.TestCase):
+    CASE_EARN = 1
+    CASE_LOSS = -1
+    CASE_ZERO = 0
+
+    def setUp(self) -> None:
+        self.user = base.create_default_user()
+
+        self.asset = facade.Account.objects.get_asset(self.user)
+        self.equity = facade.Account.objects.get_equity(self.user)
+        self.expense = facade.Account.objects.get_expense(self.user)
+        self.revenue = facade.Account.objects.get_revenue(self.user)
+        self.result = facade.Account.objects.get_expense(self.user)
+
+        self.loss_account = facade.create_account(
+            user=self.user,
+            parent=self.equity,
+            form_data={"name": "Prejuizo"},
+        )
+
+        self.earn_account = facade.create_account(
+            user=self.user,
+            parent=self.equity,
+            form_data={"name": "Lucro"},
+        )
+
+        self.period = base.create_period(
+            self.user, status=facade.AccountingPeriod.Status.CLOSING_ACCOUNTS
+        )
+
+    def prepare_case(self, c: int):
+        _, _, asset = base.create_children_accounts(self.user, root=self.asset)
+        _, equity, _ = base.create_children_accounts(self.user, root=self.equity)
+        _, _, expense = base.create_children_accounts(self.user, root=self.expense)
+        _, revenue, _ = base.create_children_accounts(self.user, root=self.revenue)
+
+        # AUMENTO DE CAPITAL
+        # ASSET: 1000, EQUITY: 1000
+        base.create_debit_and_credit(
+            period=self.period, value=1000, debit=asset, credit=equity
+        )
+
+        # GASTO COM X
+        # ASSET: 1000 - 400 = 600
+        # EXPENSE: 400
+        base.create_debit_and_credit(
+            period=self.period, value=400, debit=expense, credit=asset
+        )
+
+        # ~GASTO
+        # ASSET: 600 + 200 = 800
+        # EXPENSE: 400 - 200 = 200
+        base.create_debit_and_credit(
+            period=self.period, value=200, debit=asset, credit=expense
+        )
+
+        # RECEITA COM A
+        # ASSET: 800 + 600 = 1400
+        # REVENUE: 600
+        base.create_debit_and_credit(
+            period=self.period, value=600, debit=asset, credit=revenue
+        )
+
+        # ~RECEITA
+        # ASSET: 1300
+        # REVENUE: 500
+        base.create_debit_and_credit(
+            period=self.period, value=100, debit=revenue, credit=asset
+        )
+
+        # Exense = Revenue
+        # EXPENSE: 200 + 300 = 500
+        # ASSET: 1300 - 300 = 1000
+        base.create_debit_and_credit(
+            period=self.period, value=300, debit=expense, credit=asset
+        )
+
+        self.assertEqual(asset.get_individual_balance(), 1000)
+        self.assertEqual(expense.get_individual_balance(), 500)
+        self.assertEqual(revenue.get_individual_balance(), 500)
+
+    def accounting_period_distribute_results(self):
+        facade.accounting_period_close_accounts(self.period, form={})
+        facade.accounting_period_distribute_results(
+            self.period,
+            form_data={
+                "loss_account": self.loss_account,
+                "earn_account": self.earn_account,
+            },
+        )
+
+    def test_result_loss(self):
+        self.prepare_case(c=self.CASE_LOSS)
+
+        _, expense, _ = base.create_children_accounts(self.user, root=self.expense)
+        _, asset, _ = base.create_children_accounts(self.user, root=self.asset)
+
+        LOSS = 1
+
+        base.create_debit_and_credit(
+            period=self.period, value=LOSS, debit=expense, credit=asset
+        )
+
+        self.accounting_period_distribute_results()
+
+        self.assertEqual(self.loss_account.get_individual_balance(), -LOSS)
+        self.assertEqual(self.earn_account.get_individual_balance(), 0)
+
+    def test_result_earn(self):
+        _, revenue, _ = base.create_children_accounts(self.user, root=self.revenue)
+        _, asset, _ = base.create_children_accounts(self.user, root=self.asset)
+
+        EARN = 1
+
+        base.create_debit_and_credit(
+            period=self.period, value=EARN, debit=asset, credit=revenue
+        )
+
+        self.accounting_period_distribute_results()
+
+        self.assertEqual(self.loss_account.get_individual_balance(), 0)
+        self.assertEqual(self.earn_account.get_individual_balance(), EARN)
+
+    def test_result_zero(self):
+        ...
+
+
 class AccountingPeriodCloseAccountsTestCase(base.TestCase):
     def setUp(self) -> None:
         self.user = base.create_default_user()

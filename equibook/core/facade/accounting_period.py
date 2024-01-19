@@ -93,8 +93,10 @@ def accounting_period_close_accounts(period, form):
     for expense in expense_root.get_children():
         close_account_expense(result=result, expense=expense, transaction=transaction)
 
+def distribute_results_loss():
+    ...
 
-def accounting_period_distribute_results(period, form: base.AccountingPeriodCloseForm):
+def accounting_period_distribute_results(period, form_data: dict):
     # Obtem a ultima transacao
     transactions = base.Transaction.objects.for_period(period)
 
@@ -141,7 +143,7 @@ def accounting_period_distribute_results(period, form: base.AccountingPeriodClos
 
         operation = base.Operation()
         operation.transaction = transaction
-        operation.account = form.cleaned_data["earn_account"]
+        operation.account = form_data["earn_account"]
         operation.value = credit_sum - debit_sum
         operation.type = base.OperationType.CREDIT
         operation.date = base.timezone.now()
@@ -159,7 +161,7 @@ def accounting_period_distribute_results(period, form: base.AccountingPeriodClos
 
         operation = base.Operation()
         operation.transaction = transaction
-        operation.account = form.cleaned_data["loss_account"]
+        operation.account = form_data["loss_account"]
         operation.value = debit_sum - credit_sum
         operation.type = base.OperationType.DEBIT
         operation.date = base.timezone.now()
