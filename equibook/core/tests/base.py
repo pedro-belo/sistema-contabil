@@ -7,6 +7,7 @@ from equibook.users.models import User
 from model_bakery import baker
 from datetime import date, timedelta, datetime
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.db.models import Sum
 
 
 def create_default_user(**kwargs):
@@ -79,18 +80,6 @@ def create_debit_and_credit(
             )
 
     return transaction
-
-
-# TODO: Remove todas as chamadas
-def create_credts_and_debits(
-    account: facade.Account,
-    account_period: facade.AccountingPeriod,
-    value,
-    credit=True,
-    debit=True,
-    reperat=1,
-):
-    raise Exception("REMOVER")
 
 
 def create_period(user, **kwargs):

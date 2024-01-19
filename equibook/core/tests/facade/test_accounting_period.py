@@ -61,6 +61,70 @@ class AccountingPeriodCloseAccountsTestCase(base.TestCase):
         facade.accounting_period_close_accounts(self.period, form={})
         self.assertEqual(expense.get_individual_balance(), 0)
 
+    def test_result_balance(self):
+        _, _, asset = base.create_children_accounts(user=self.user, root=self.asset)
+        _, equity, _ = base.create_children_accounts(user=self.user, root=self.equity)
+        _, _, expense = base.create_children_accounts(user=self.user, root=self.expense)
+        _, revenue, _ = base.create_children_accounts(user=self.user, root=self.revenue)
+
+        # AUMENTO DE CAPITAL
+        # ASSET: 10
+        # EQUITY: 10
+        base.create_debit_and_credit(
+            period=self.period, value=10, debit=asset, credit=equity
+        )
+
+        # GASTO X
+        # ASSET: 10 - 8 = 2
+        # EXPENSE: 8
+        base.create_debit_and_credit(
+            period=self.period, value=8, debit=expense, credit=asset
+        )
+
+        # RECEITA A
+        # ASSET: 2 + 20 = 22
+        # REVENUE: 20
+        base.create_debit_and_credit(
+            period=self.period, value=20, debit=asset, credit=revenue
+        )
+
+        # GASTO Y
+        # ASSET: 22 - 16 = 6
+        # EXPENSE: 8 + 16 = 24
+        base.create_debit_and_credit(
+            period=self.period, value=16, debit=expense, credit=asset
+        )
+
+        # RECEITA B
+        # ASSET: 6 + 32 = 38
+        # REVENUE: 20 + 32 = 52
+        base.create_debit_and_credit(
+            period=self.period, value=32, debit=asset, credit=revenue
+        )
+
+        EXPENSE_BALANCE = 24
+        REVENUE_BALANCE = 52
+        self.assertEqual(expense.get_individual_balance(), EXPENSE_BALANCE)
+        self.assertEqual(revenue.get_individual_balance(), REVENUE_BALANCE)
+        self.assertEqual(asset.get_individual_balance(), 38)
+        self.assertEqual(equity.get_individual_balance(), 10)
+
+        facade.accounting_period_close_accounts(self.period, form={})
+        self.assertEqual(expense.get_individual_balance(), 0)
+        self.assertEqual(revenue.get_individual_balance(), 0)
+
+        result_operations = facade.Operation.objects.filter(account=self.result)
+
+        debit_sum = result_operations.filter(
+            type=facade.OperationType.DEBIT,
+        ).aggregate(debit_sum=base.Sum("value"))["debit_sum"]
+        self.assertEqual(debit_sum, EXPENSE_BALANCE)
+
+        credit_sum = result_operations.filter(
+            type=facade.OperationType.CREDIT,
+        ).aggregate(credit_sum=base.Sum("value"))["credit_sum"]
+        self.assertEqual(credit_sum, REVENUE_BALANCE)
+
 
 class CreateFirstAccountPeriodTestCase(base.TestCase):
     def setUp(self) -> None:
