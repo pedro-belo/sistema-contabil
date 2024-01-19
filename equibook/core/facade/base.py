@@ -1,3 +1,4 @@
+from decimal import Decimal  # NOQA
 from django.utils import timezone  # NOQA
 from django.db.models import Sum, F  # NOQA
 from datetime import datetime  # NOQA
