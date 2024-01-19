@@ -15,23 +15,13 @@ class TrialBalanceItemData:
         self.credit = []
         self.debit = []
 
-    def cd_dc_sub(self):
-        return (
-            self.debit_sum() - self.credit_sum()
-            if self.account["balance_type"] == base.TypeOfBalance.DEBIT
-            else self.credit_sum() - self.debit_sum()
-        )
-
-    def _balance(self, balance_type):
-        match balance_type:
+    def balance(self):
+        match self.account["balance_type"]:
             case base.TypeOfBalance.DEBIT:
                 return self.debit_sum() - self.credit_sum()
 
             case base.TypeOfBalance.CREDIT:
-                self.credit_sum() - self.debit_sum()
-
-            case base.TypeOfBalance.UNDEF:
-                return -1
+                return self.credit_sum() - self.debit_sum()
 
             case _:
                 raise ValueError
@@ -162,9 +152,7 @@ def get_transaction_details(transaction: base.Transaction, **kwargs):
             "id": instance["id"],
             "date": instance["date"].strftime("%d-%m-%Y"),
             "account_name": instance["account_name"],
-            "account_balance": balancete["accounts"][
-                instance["account_id"]
-            ].cd_dc_sub(),
+            "account_balance": balancete["accounts"][instance["account_id"]].balance(),
             "account_type": base.TypeOfAccount(instance["account_type"]).label,
             "get_type_display": base.OperationType(instance["type"]).label,
             "value": instance["value"],
