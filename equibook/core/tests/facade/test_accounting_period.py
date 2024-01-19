@@ -2,6 +2,29 @@ from equibook.core.tests import base
 from equibook.core import facade
 
 
+class AccountingPeriodClosePeriodTestCase(base.TestCase):
+    def setUp(self) -> None:
+        self.user = base.create_default_user()
+        self.period = base.create_period(
+            self.user, status=facade.AccountingPeriod.Status.CLOSING_ACCOUNTS
+        )
+
+    def test_accounting_period_close_period(self):
+        date = self.period.end_date + base.timedelta(days=1)
+
+        new_period = facade.accounting_period_close_period(
+            period=self.period,
+            form_data={"start_date": date, "end_date": date},
+        )
+
+        self.assertEqual(new_period.start_date, date)
+        self.assertEqual(new_period.end_date, date)
+        self.assertEqual(new_period.status, facade.AccountingPeriod.Status.IN_PROGRESS)
+
+        prev_period = facade.AccountingPeriod.objects.get(pk=self.period.pk)
+        self.assertEqual(prev_period.status, facade.AccountingPeriod.Status.CLOSED)
+
+
 class AccountingPeriodDistributeResultsTestCase(base.TestCase):
     def setUp(self) -> None:
         self.user = base.create_default_user()
