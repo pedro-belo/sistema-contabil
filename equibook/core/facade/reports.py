@@ -8,8 +8,9 @@ def has_key(d: dict, k):
 
 
 class TrialBalanceItemData:
-    def __init__(self, account: dict, cache_accounts: list) -> None:
-        self.accounts_d = {acc["id"]: acc for acc in cache_accounts}
+    def __init__(self, account: dict, cache_accounts_d: dict) -> None:
+        self.accounts_d = cache_accounts_d
+        print(id(cache_accounts_d))
         self.account = account
         self.name = account["name"]
         self.credit = []
@@ -80,7 +81,7 @@ def create_trial_balance_item(transaction, data, operations, **kwargs):
 
         if account["id"] not in data["accounts"]:
             data["accounts"][account["id"]] = TrialBalanceItemData(
-                account, cache_accounts=cache_accounts
+                account, cache_accounts_d=cache_accounts_d
             )
 
         if operation["type"] == base.OperationType.CREDIT:
