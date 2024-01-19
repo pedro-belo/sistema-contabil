@@ -23,8 +23,11 @@ class TrialBalanceItemData:
             case base.TypeOfBalance.CREDIT:
                 return self.credit_sum() - self.debit_sum()
 
+            case base.TypeOfBalance.UNDEF:
+                return abs(self.debit_sum() - self.credit_sum())
+
             case _:
-                raise ValueError
+                raise ValueError("Invalid")
 
     def balance_undef(self, expected):
         credit_sum = sum(self.credit)
@@ -39,23 +42,17 @@ class TrialBalanceItemData:
         return 0
 
     def balance_credit(self):
-        if self.account["balance_type"] == base.TypeOfBalance.UNDEF:
-            return self.balance_undef(base.TypeOfBalance.CREDIT)
-
         return (
-            self.credit_sum() - self.debit_sum()
+            self.balance()
             if self.account["balance_type"] == base.TypeOfBalance.CREDIT
-            else 0
+            else base.Decimal("0.00")
         )
 
     def balance_debit(self):
-        if self.account["balance_type"] == base.TypeOfBalance.UNDEF:
-            return self.balance_undef(base.TypeOfBalance.DEBIT)
-
         return (
-            self.debit_sum() - self.credit_sum()
+            self.balance()
             if self.account["balance_type"] == base.TypeOfBalance.DEBIT
-            else 0
+            else base.Decimal("0.00")
         )
 
     def get_path(self):
