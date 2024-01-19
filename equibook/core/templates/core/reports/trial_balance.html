@@ -47,10 +47,10 @@
         {% endfor %}
         <tr class="bg-light bg-opacity-75">
             <td>Σ</td>
-            <td class="text-end">{{balancete.moviment_d_sum|to_current_currency:app_settings|intcomma}} </td>
-            <td class="text-end">{{balancete.moviment_c_sum|to_current_currency:app_settings|intcomma}} </td>
-            <td class="text-end">{{balancete.balance_d_sum|to_current_currency:app_settings|intcomma}} </td>
-            <td class="text-end">{{balancete.balance_c_sum|to_current_currency:app_settings|intcomma}} </td>
+            <td class="text-end">{{balancete.moviment_debit_sum|to_current_currency:app_settings|intcomma}} </td>
+            <td class="text-end">{{balancete.moviment_credit_sum|to_current_currency:app_settings|intcomma}} </td>
+            <td class="text-end">{{balancete.balance_debit_sum|to_current_currency:app_settings|intcomma}} </td>
+            <td class="text-end">{{balancete.balance_credit_sum|to_current_currency:app_settings|intcomma}} </td>
         </tr>
     </tbody>
 

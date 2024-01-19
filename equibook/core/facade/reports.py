@@ -10,7 +10,6 @@ def has_key(d: dict, k):
 class TrialBalanceItemData:
     def __init__(self, account: dict, cache_accounts_d: dict) -> None:
         self.accounts_d = cache_accounts_d
-        print(id(cache_accounts_d))
         self.account = account
         self.name = account["name"]
         self.credit = []
@@ -86,11 +85,11 @@ def create_trial_balance_item(transaction, data, operations, **kwargs):
 
         if operation["type"] == base.OperationType.CREDIT:
             data["accounts"][account["id"]].credit.append(operation["value"])
-            data["moviment_c_sum"] += operation["value"]
+            data["moviment_credit_sum"] += operation["value"]
 
         if operation["type"] == base.OperationType.DEBIT:
             data["accounts"][account["id"]].debit.append(operation["value"])
-            data["moviment_d_sum"] += operation["value"]
+            data["moviment_debit_sum"] += operation["value"]
 
 
 def get_transaction_details(transaction: base.Transaction, **kwargs):
@@ -161,10 +160,10 @@ def get_transaction_details(transaction: base.Transaction, **kwargs):
 def create_trial_balance(transaction: base.Transaction, **kwargs):
     result = {
         "accounts": {},
-        "moviment_c_sum": 0,
-        "balance_c_sum": 0,
-        "moviment_d_sum": 0,
-        "balance_d_sum": 0,
+        "balance_credit_sum": 0,
+        "balance_debit_sum": 0,
+        "moviment_credit_sum": 0,
+        "moviment_debit_sum": 0,
     }
 
     cache_transactions = (
@@ -203,8 +202,8 @@ def create_trial_balance(transaction: base.Transaction, **kwargs):
         first = transactions_d[first["next_id"]]
 
     for k in result["accounts"]:
-        result["balance_d_sum"] += result["accounts"][k].balance_debit()
-        result["balance_c_sum"] += result["accounts"][k].balance_credit()
+        result["balance_debit_sum"] += result["accounts"][k].balance_debit()
+        result["balance_credit_sum"] += result["accounts"][k].balance_credit()
 
     return result
 
