@@ -64,7 +64,7 @@ def close_account_expense(
     operation.save()
 
 
-def accounting_period_close_accounts(period, form):
+def accounting_period_close_accounts(period, form_data):
     transactions = base.Transaction.objects.for_period(period)
 
     try:

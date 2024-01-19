@@ -80,7 +80,7 @@ class AccountingPeriodDistributeResultsTestCase(base.TestCase):
         self.assertEqual(revenue.get_individual_balance(), 500)
 
     def accounting_period_distribute_results(self):
-        facade.accounting_period_close_accounts(self.period, form={})
+        facade.accounting_period_close_accounts(self.period, form_data={})
         facade.accounting_period_distribute_results(
             self.period,
             form_data={
@@ -144,7 +144,7 @@ class AccountingPeriodCloseAccountsTestCase(base.TestCase):
         )
 
     def test_no_transactions(self):
-        facade.accounting_period_close_accounts(self.period, form={})
+        facade.accounting_period_close_accounts(self.period, form_data={})
         self.assertEqual(facade.Transaction.objects.count(), 0)
 
     def test_revenue_balance(self):
@@ -161,7 +161,7 @@ class AccountingPeriodCloseAccountsTestCase(base.TestCase):
         base.create_debit_and_credit(self.period, value=5, debit=revenue, credit=asset)
         self.assertEqual(revenue.get_individual_balance(), 5)
 
-        facade.accounting_period_close_accounts(self.period, form={})
+        facade.accounting_period_close_accounts(self.period, form_data={})
         self.assertEqual(revenue.get_individual_balance(), 0)
 
     def test_expense_balance(self):
@@ -183,7 +183,7 @@ class AccountingPeriodCloseAccountsTestCase(base.TestCase):
         base.create_debit_and_credit(self.period, value=5, debit=asset, credit=expense)
         self.assertEqual(expense.get_individual_balance(), 5)
 
-        facade.accounting_period_close_accounts(self.period, form={})
+        facade.accounting_period_close_accounts(self.period, form_data={})
         self.assertEqual(expense.get_individual_balance(), 0)
 
     def test_result_balance(self):
@@ -234,7 +234,7 @@ class AccountingPeriodCloseAccountsTestCase(base.TestCase):
         self.assertEqual(asset.get_individual_balance(), 38)
         self.assertEqual(equity.get_individual_balance(), 10)
 
-        facade.accounting_period_close_accounts(self.period, form={})
+        facade.accounting_period_close_accounts(self.period, form_data={})
         self.assertEqual(expense.get_individual_balance(), 0)
         self.assertEqual(revenue.get_individual_balance(), 0)
 

@@ -81,7 +81,7 @@ class AccountingPeriodDetailView(base.FormView):
         return base.redirect("core:accounting-period-detail")
 
     def _form_valid_closing_accounts(self, form):
-        facade.accounting_period_close_accounts(self.period, form)
+        facade.accounting_period_close_accounts(self.period, form.cleaned_data)
         facade.accounting_period_distribute_results(self.period, form.cleaned_data)
         facade.accounting_period_close_period(self.period, form)
         return base.redirect("core:accounting-period-detail")
