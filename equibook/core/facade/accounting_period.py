@@ -190,13 +190,13 @@ def accounting_period_distribute_results(period, form_data: dict):
             )
 
 
-def accounting_period_close_period(
-    period: base.AccountingPeriod, form: base.AccountingPeriodCreateForm
-):
+def accounting_period_close_period(period: base.AccountingPeriod, form_data: dict):
     period.status = base.AccountingPeriod.Status.CLOSED
     period.save()
 
-    accounting_period = form.save(commit=False)
+    accounting_period = base.AccountingPeriod()
+    accounting_period.start_date = form_data["start_date"]
+    accounting_period.end_date = form_data["end_date"]
     accounting_period.status = base.AccountingPeriod.Status.IN_PROGRESS
     accounting_period.user = period.user
     accounting_period.save()
