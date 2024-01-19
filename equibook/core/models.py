@@ -204,7 +204,6 @@ class Account(models.Model):
         blank=True,
     )
 
-    # Performance reanson
     root_type = models.PositiveSmallIntegerField(
         choices=TypeOfAccount.choices, null=True
     )

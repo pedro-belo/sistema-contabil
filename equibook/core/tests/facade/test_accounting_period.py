@@ -3,10 +3,6 @@ from equibook.core import facade
 
 
 class AccountingPeriodDistributeResultsTestCase(base.TestCase):
-    CASE_EARN = 1
-    CASE_LOSS = -1
-    CASE_ZERO = 0
-
     def setUp(self) -> None:
         self.user = base.create_default_user()
 
@@ -32,7 +28,7 @@ class AccountingPeriodDistributeResultsTestCase(base.TestCase):
             self.user, status=facade.AccountingPeriod.Status.CLOSING_ACCOUNTS
         )
 
-    def prepare_case(self, c: int):
+    def prepare_case(self):
         _, _, asset = base.create_children_accounts(self.user, root=self.asset)
         _, equity, _ = base.create_children_accounts(self.user, root=self.equity)
         _, _, expense = base.create_children_accounts(self.user, root=self.expense)
@@ -94,7 +90,7 @@ class AccountingPeriodDistributeResultsTestCase(base.TestCase):
         )
 
     def test_result_loss(self):
-        self.prepare_case(c=self.CASE_LOSS)
+        self.prepare_case()
 
         _, expense, _ = base.create_children_accounts(self.user, root=self.expense)
         _, asset, _ = base.create_children_accounts(self.user, root=self.asset)
@@ -126,7 +122,9 @@ class AccountingPeriodDistributeResultsTestCase(base.TestCase):
         self.assertEqual(self.earn_account.get_individual_balance(), EARN)
 
     def test_result_zero(self):
-        ...
+        self.prepare_case()
+        self.assertEqual(self.loss_account.get_individual_balance(), 0)
+        self.assertEqual(self.earn_account.get_individual_balance(), 0)
 
 
 class AccountingPeriodCloseAccountsTestCase(base.TestCase):
