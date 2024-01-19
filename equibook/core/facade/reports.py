@@ -201,9 +201,10 @@ def create_trial_balance(transaction: base.Transaction, **kwargs):
 
         first = transactions_d[first["next_id"]]
 
-    for k in result["accounts"]:
-        result["balance_debit_sum"] += result["accounts"][k].balance_debit()
-        result["balance_credit_sum"] += result["accounts"][k].balance_credit()
+    for account_id in result["accounts"]:
+        account = result["accounts"][account_id]
+        result["balance_debit_sum"] += account.balance_debit()
+        result["balance_credit_sum"] += account.balance_credit()
 
     return result
 
