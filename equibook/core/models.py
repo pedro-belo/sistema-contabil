@@ -110,7 +110,7 @@ class OperationType(models.IntegerChoices):
     DEBIT = 2, "Débito"
 
 
-class TypeOfAccount(models.IntegerChoices):
+class AccountType(models.IntegerChoices):
     ASSET = 1, "Ativo"
     LIABILITY = 2, "Passivo"
     EQUITY = 3, "Patrimônio Líquido"
@@ -172,7 +172,7 @@ class AccountingPeriod(models.Model):
 
 class Account(models.Model):
     AccountTypeOfBalance = BalanceType
-    AccountTypeOfAccount = TypeOfAccount
+    AccountTypeOfAccount = AccountType
 
     user = models.ForeignKey(
         "users.User",
@@ -192,7 +192,7 @@ class Account(models.Model):
     )
 
     account_type = models.PositiveSmallIntegerField(
-        choices=TypeOfAccount.choices,
+        choices=AccountType.choices,
         verbose_name="Tipo de Conta",
     )
 
@@ -205,7 +205,7 @@ class Account(models.Model):
     )
 
     root_type = models.PositiveSmallIntegerField(
-        choices=TypeOfAccount.choices, null=True
+        choices=AccountType.choices, null=True
     )
 
     objects: AccountManager = AccountManager()
@@ -224,12 +224,12 @@ class Account(models.Model):
         )["credit_sum"]
 
         if self.account_type not in [
-            TypeOfAccount.ASSET,
-            TypeOfAccount.EQUITY,
-            TypeOfAccount.LIABILITY,
-            TypeOfAccount.EXPENSE,
-            TypeOfAccount.REVENUE,
-            TypeOfAccount.SUBDIVISION,
+            AccountType.ASSET,
+            AccountType.EQUITY,
+            AccountType.LIABILITY,
+            AccountType.EXPENSE,
+            AccountType.REVENUE,
+            AccountType.SUBDIVISION,
         ]:
             raise ValueError("Operação não definida")
 
@@ -271,7 +271,7 @@ class Account(models.Model):
         return result + self.total_operation_balance()
 
     def can_remove(self):
-        if self.account_type != TypeOfAccount.SUBDIVISION:
+        if self.account_type != AccountType.SUBDIVISION:
             return False
 
         if self.account_operation.count() > 0:

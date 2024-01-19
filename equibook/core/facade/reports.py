@@ -138,7 +138,7 @@ def get_transaction_details(transaction: base.Transaction, **kwargs):
             "date": instance["date"].strftime("%d-%m-%Y"),
             "account_name": instance["account_name"],
             "account_balance": balancete["accounts"][instance["account_id"]].balance(),
-            "account_type": base.TypeOfAccount(instance["account_type"]).label,
+            "account_type": base.AccountType(instance["account_type"]).label,
             "get_type_display": base.OperationType(instance["type"]).label,
             "value": instance["value"],
             "debit": 0,

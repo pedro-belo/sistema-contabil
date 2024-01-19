@@ -1,7 +1,7 @@
 from equibook.core.models import (
     Setting,
     Account,
-    TypeOfAccount,
+    AccountType,
     BalanceType,
     AccountingPeriod,
 )
@@ -23,37 +23,37 @@ def user_setup(user, form_data):
 
     Account.objects.create(
         user=user,
-        name=TypeOfAccount.ASSET.label,
-        account_type=TypeOfAccount.ASSET,
+        name=AccountType.ASSET.label,
+        account_type=AccountType.ASSET,
         balance_type=BalanceType.DEBIT,
     )
     Account.objects.create(
         user=user,
-        name=TypeOfAccount.LIABILITY.label,
-        account_type=TypeOfAccount.LIABILITY,
+        name=AccountType.LIABILITY.label,
+        account_type=AccountType.LIABILITY,
         balance_type=BalanceType.CREDIT,
     )
     Account.objects.create(
         user=user,
-        name=TypeOfAccount.EQUITY.label,
-        account_type=TypeOfAccount.EQUITY,
+        name=AccountType.EQUITY.label,
+        account_type=AccountType.EQUITY,
         balance_type=BalanceType.CREDIT,
     )
     Account.objects.create(
         user=user,
-        name=TypeOfAccount.REVENUE.label,
-        account_type=TypeOfAccount.REVENUE,
+        name=AccountType.REVENUE.label,
+        account_type=AccountType.REVENUE,
         balance_type=BalanceType.CREDIT,
     )
     Account.objects.create(
         user=user,
-        name=TypeOfAccount.EXPENSE.label,
-        account_type=TypeOfAccount.EXPENSE,
+        name=AccountType.EXPENSE.label,
+        account_type=AccountType.EXPENSE,
         balance_type=BalanceType.DEBIT,
     )
     Account.objects.create(
         user=user,
-        name=TypeOfAccount.RESULT.label,
-        account_type=TypeOfAccount.RESULT,
+        name=AccountType.RESULT.label,
+        account_type=AccountType.RESULT,
         balance_type=BalanceType.UNDEF,
     )

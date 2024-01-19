@@ -15,7 +15,7 @@ class CreateAccountTestCase(base.TestCase):
         self.assertIsNotNone(acc1.id)
         self.assertEqual(acc1.name, "ACC-1")
         self.assertEqual(acc1.balance_type, root.balance_type)
-        self.assertEqual(acc1.account_type, facade.TypeOfAccount.SUBDIVISION)
+        self.assertEqual(acc1.account_type, facade.AccountType.SUBDIVISION)
         self.assertEqual(acc1.root_type, root.account_type)
         self.assertEqual(acc1.parent, root)
         self.assertEqual(acc1.user, self.user)

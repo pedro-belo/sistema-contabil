@@ -4,7 +4,7 @@ from . import base
 
 def get_user_accounts(user):
     return facade.Account.objects.for_user(user).exclude(
-        account_type=facade.TypeOfAccount.RESULT
+        account_type=facade.AccountType.RESULT
     )
 
 
