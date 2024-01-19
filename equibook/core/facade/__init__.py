@@ -52,3 +52,5 @@ from equibook.core.cache.account import (  # NOQA
     cache_get_accounts,
     cache_get_accounts_refresh,
 )
+
+from equibook.core.facade.trial_balance import TrialBalance

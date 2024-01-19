@@ -4,12 +4,12 @@
 
 {% load to_current_currency %}
 
-{% block head_title %}Balancete de Verificação{% endblock %}
+{% block head_title %}trial_balance de Verificação{% endblock %}
 
 {% block content %}
 
 <header class="mt-4 p-4 text-center">
-    <h1>Balancete de Verificação</h1>
+    <h1>trial_balance de Verificação</h1>
     <h2>{% now "d-m-Y" %}</h2>
 </header>
 
@@ -29,7 +29,7 @@
     </thead>
 
     <tbody>
-        {% for item in balancete.accounts.values %}
+        {% for item in trial_balance.accounts %}
         <tr>
             <td>
                 <p class="fw-bold m-0">{{item.name}}</p>
@@ -47,10 +47,10 @@
         {% endfor %}
         <tr class="bg-light bg-opacity-75">
             <td>Σ</td>
-            <td class="text-end">{{balancete.moviment_debit_sum|to_current_currency:app_settings|intcomma}} </td>
-            <td class="text-end">{{balancete.moviment_credit_sum|to_current_currency:app_settings|intcomma}} </td>
-            <td class="text-end">{{balancete.balance_debit_sum|to_current_currency:app_settings|intcomma}} </td>
-            <td class="text-end">{{balancete.balance_credit_sum|to_current_currency:app_settings|intcomma}} </td>
+            <td class="text-end">{{trial_balance.moviment_debit_sum|to_current_currency:app_settings|intcomma}} </td>
+            <td class="text-end">{{trial_balance.moviment_credit_sum|to_current_currency:app_settings|intcomma}} </td>
+            <td class="text-end">{{trial_balance.balance_debit_sum|to_current_currency:app_settings|intcomma}} </td>
+            <td class="text-end">{{trial_balance.balance_credit_sum|to_current_currency:app_settings|intcomma}} </td>
         </tr>
     </tbody>
 

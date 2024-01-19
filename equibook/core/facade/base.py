@@ -28,3 +28,6 @@ from equibook.core.forms import (  # NOQA
     AccountingPeriodCloseForm,
     AccountingPeriodCreateForm,
 )
+
+def create_dict(items, key="id"):
+    return {i[key]: i for i in items}
