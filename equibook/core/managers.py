@@ -2,8 +2,6 @@ from django.db import models
 
 
 class AccountManager(models.Manager):
-    def get(self, *args, user, **kwargs):
-        return super().get(*args, user=user, **kwargs)
 
     def from_user(self, user):
         return self.model.objects.filter(user=user)

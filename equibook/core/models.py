@@ -296,6 +296,14 @@ class Account(models.Model):
 
         return path
 
+    def get_children(self):
+        result = [self]
+
+        for account in self.account_set.all():
+            result.extend(account.get_children())
+
+        return result
+
     def get_recursive_childrens(self, period):
         result = list(self.account_operation.filter(transaction__period=period))
 

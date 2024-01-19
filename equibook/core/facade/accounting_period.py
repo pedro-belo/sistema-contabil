@@ -20,7 +20,7 @@ def create_first_account_period(user: base.User, form_data: dict):
     return accounting_period
 
 
-def _accounting_period_close_accounts_revenue(
+def close_account_revenue(
     result: base.Account, revenue: base.Account, transaction: base.Transaction
 ):
     # "Zerando" saldo da conta de Receita (revenue)
@@ -43,7 +43,7 @@ def _accounting_period_close_accounts_revenue(
     operation.save()
 
 
-def _accounting_period_close_accounts_expense(
+def close_account_expense(
     result: base.Account, expense: base.Account, transaction: base.Transaction
 ):
     expense_balance = expense.get_individual_balance()
@@ -87,19 +87,11 @@ def accounting_period_close_accounts(period, form):
 
     revenue_root = base.Account.objects.get_revenue(period.user)
     for revenue in revenue_root.get_children():
-        _accounting_period_close_accounts_revenue(
-            result=result,
-            revenue=revenue,
-            transaction=transaction,
-        )
+        close_account_revenue(result=result, revenue=revenue, transaction=transaction)
 
     expense_root = base.Account.objects.get_expense(period.user)
     for expense in expense_root.get_children():
-        _accounting_period_close_accounts_expense(
-            result=result,
-            expense=expense,
-            transaction=transaction,
-        )
+        close_account_expense(result=result, expense=expense, transaction=transaction)
 
 
 def accounting_period_distribute_results(period, form: base.AccountingPeriodCloseForm):
