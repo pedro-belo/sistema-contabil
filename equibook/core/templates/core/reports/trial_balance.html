@@ -39,8 +39,8 @@
                     {% endfor %}
                 </small>
             </td>
-            <td class="text-end">{{item.moviment_debit|to_current_currency:app_settings|intcomma}} </td>
-            <td class="text-end">{{item.moviment_credit|to_current_currency:app_settings|intcomma}} </td>
+            <td class="text-end">{{item.debit_sum|to_current_currency:app_settings|intcomma}} </td>
+            <td class="text-end">{{item.credit_sum|to_current_currency:app_settings|intcomma}} </td>
             <td class="text-end">{{item.balance_debit|to_current_currency:app_settings|intcomma}} </td>
             <td class="text-end">{{item.balance_credit|to_current_currency:app_settings|intcomma}} </td>
         </tr>

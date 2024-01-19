@@ -17,18 +17,18 @@ class TrialBalanceItemData:
 
     def cd_dc_sub(self):
         return (
-            self.moviment_debit() - self.moviment_credit()
+            self.debit_sum() - self.credit_sum()
             if self.account["balance_type"] == base.TypeOfBalance.DEBIT
-            else self.moviment_credit() - self.moviment_debit()
+            else self.credit_sum() - self.debit_sum()
         )
 
     def _balance(self, balance_type):
         match balance_type:
             case base.TypeOfBalance.DEBIT:
-                return self.moviment_debit() - self.moviment_credit()
+                return self.debit_sum() - self.credit_sum()
 
             case base.TypeOfBalance.CREDIT:
-                self.moviment_credit() - self.moviment_debit()
+                self.credit_sum() - self.debit_sum()
 
             case base.TypeOfBalance.UNDEF:
                 return -1
@@ -53,7 +53,7 @@ class TrialBalanceItemData:
             return self.balance_undef(base.TypeOfBalance.CREDIT)
 
         return (
-            self.moviment_credit() - self.moviment_debit()
+            self.credit_sum() - self.debit_sum()
             if self.account["balance_type"] == base.TypeOfBalance.CREDIT
             else 0
         )
@@ -63,7 +63,7 @@ class TrialBalanceItemData:
             return self.balance_undef(base.TypeOfBalance.DEBIT)
 
         return (
-            self.moviment_debit() - self.moviment_credit()
+            self.debit_sum() - self.credit_sum()
             if self.account["balance_type"] == base.TypeOfBalance.DEBIT
             else 0
         )
@@ -83,10 +83,10 @@ class TrialBalanceItemData:
 
         return path
 
-    def moviment_credit(self):
+    def credit_sum(self):
         return sum(self.credit)
 
-    def moviment_debit(self):
+    def debit_sum(self):
         return sum(self.debit)
 
 
