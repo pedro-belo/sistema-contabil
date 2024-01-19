@@ -35,14 +35,14 @@ class OperationForm(base.FormCustom, forms.ModelForm):
 
         if (account is not None) and (type is not None) and (value is not None):
             account_balance = account.get_individual_balance()
-            if account.balance_type == facade.TypeOfBalance.DEBIT:
-                if (type == facade.TypeOfBalance.CREDIT) and (value > account_balance):
+            if account.balance_type == facade.BalanceType.DEBIT:
+                if (type == facade.BalanceType.CREDIT) and (value > account_balance):
                     raise forms.ValidationError(
                         f"A conta {account.name} não tem saldo suficiente para este crédito."
                     )
 
-            elif account.balance_type == facade.TypeOfBalance.CREDIT:
-                if (type == facade.TypeOfBalance.DEBIT) and (value > account_balance):
+            elif account.balance_type == facade.BalanceType.CREDIT:
+                if (type == facade.BalanceType.DEBIT) and (value > account_balance):
                     raise forms.ValidationError(
                         f"A conta {account.name} não tem saldo suficiente para este débito."
                     )

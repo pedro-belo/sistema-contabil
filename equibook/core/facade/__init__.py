@@ -7,7 +7,7 @@ from equibook.core.models import (  # NOQA
     Currency,
     OperationType,
     TypeOfAccount,
-    TypeOfBalance,
+    BalanceType,
     AccountingPeriod,
 )
 

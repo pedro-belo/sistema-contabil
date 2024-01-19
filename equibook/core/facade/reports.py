@@ -17,13 +17,13 @@ class TrialBalanceItemData:
 
     def balance(self):
         match self.account["balance_type"]:
-            case base.TypeOfBalance.DEBIT:
+            case base.BalanceType.DEBIT:
                 return self.debit_sum() - self.credit_sum()
 
-            case base.TypeOfBalance.CREDIT:
+            case base.BalanceType.CREDIT:
                 return self.credit_sum() - self.debit_sum()
 
-            case base.TypeOfBalance.UNDEF:
+            case base.BalanceType.UNDEF:
                 return abs(self.debit_sum() - self.credit_sum())
 
             case _:
@@ -32,14 +32,14 @@ class TrialBalanceItemData:
     def balance_credit(self):
         return (
             self.balance()
-            if self.account["balance_type"] == base.TypeOfBalance.CREDIT
+            if self.account["balance_type"] == base.BalanceType.CREDIT
             else base.Decimal("0.00")
         )
 
     def balance_debit(self):
         return (
             self.balance()
-            if self.account["balance_type"] == base.TypeOfBalance.DEBIT
+            if self.account["balance_type"] == base.BalanceType.DEBIT
             else base.Decimal("0.00")
         )
 

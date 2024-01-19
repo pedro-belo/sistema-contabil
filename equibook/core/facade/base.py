@@ -13,7 +13,7 @@ from equibook.core.models import (  # NOQA
     OperationType,
     Account,
     AccountingPeriod,
-    TypeOfBalance,
+    BalanceType,
     Operation,
     OperationMeta,
     TypeOfAccount,

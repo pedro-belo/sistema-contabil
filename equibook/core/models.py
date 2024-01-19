@@ -120,7 +120,7 @@ class TypeOfAccount(models.IntegerChoices):
     RESULT = 7, "Resultado"
 
 
-class TypeOfBalance(models.IntegerChoices):
+class BalanceType(models.IntegerChoices):
     CREDIT = 1, "Credor"
     DEBIT = 2, "Devedor"
     UNDEF = 3, "Indefinido"
@@ -171,7 +171,7 @@ class AccountingPeriod(models.Model):
 
 
 class Account(models.Model):
-    AccountTypeOfBalance = TypeOfBalance
+    AccountTypeOfBalance = BalanceType
     AccountTypeOfAccount = TypeOfAccount
 
     user = models.ForeignKey(
@@ -187,7 +187,7 @@ class Account(models.Model):
     )
 
     balance_type = models.PositiveSmallIntegerField(
-        choices=TypeOfBalance.choices,
+        choices=BalanceType.choices,
         verbose_name="Tipo de Saldo",
     )
 
@@ -235,7 +235,7 @@ class Account(models.Model):
 
         return (
             (debit_sum - credit_sum)
-            if self.balance_type == TypeOfBalance.DEBIT
+            if self.balance_type == BalanceType.DEBIT
             else credit_sum - debit_sum
         )
 
@@ -243,7 +243,7 @@ class Account(models.Model):
         result = 0
 
         for operation in self.account_operation.values("type", "value"):
-            if self.balance_type == TypeOfBalance.CREDIT:
+            if self.balance_type == BalanceType.CREDIT:
                 if operation["type"] == OperationType.CREDIT:
                     result += operation["value"]
                 elif operation["type"] == OperationType.DEBIT:
@@ -251,7 +251,7 @@ class Account(models.Model):
                 else:
                     raise ValueError
 
-            elif self.balance_type == TypeOfBalance.DEBIT:
+            elif self.balance_type == BalanceType.DEBIT:
                 if operation["type"] == OperationType.DEBIT:
                     result += operation["value"]
                 elif operation["type"] == OperationType.CREDIT:
