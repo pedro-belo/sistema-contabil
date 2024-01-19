@@ -27,16 +27,3 @@ from equibook.core.forms import (  # NOQA
     AccountingPeriodCloseForm,
     AccountingPeriodCreateForm,
 )
-
-
-def get_last_transaction(period: AccountingPeriod):
-    transactions = Transaction.objects.for_period(period)
-    return transactions.get(next=None) if transactions.count() > 0 else None
-
-
-def get_first_transaction(period: AccountingPeriod):
-    transactions = cache_get_period_transactions(
-        period_id=period.id,
-        user_id=period.user_id,
-    )
-    return transactions[-1]
