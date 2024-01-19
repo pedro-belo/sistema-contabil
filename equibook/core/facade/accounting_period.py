@@ -93,11 +93,54 @@ def accounting_period_close_accounts(period, form):
     for expense in expense_root.get_children():
         close_account_expense(result=result, expense=expense, transaction=transaction)
 
-def distribute_results_loss():
-    ...
+
+def distribute_results_loss(
+    transaction: base.Transaction,
+    result: base.Account,
+    loss: base.Account,
+    result_balance,
+):
+    operation = base.Operation()
+    operation.transaction = transaction
+    operation.account = result
+    operation.value = result_balance
+    operation.type = base.OperationType.CREDIT
+    operation.date = base.timezone.now()
+    operation.save()
+
+    operation = base.Operation()
+    operation.transaction = transaction
+    operation.account = loss
+    operation.value = result_balance
+    operation.type = base.OperationType.DEBIT
+    operation.date = base.timezone.now()
+    operation.save()
+
+
+def distribute_results_earn(
+    transaction: base.Transaction,
+    result: base.Account,
+    earn: base.Account,
+    result_balance,
+):
+    operation = base.Operation()
+    operation.transaction = transaction
+    operation.account = result
+    operation.value = result_balance
+    operation.type = base.OperationType.DEBIT
+    operation.date = base.timezone.now()
+    operation.save()
+
+    operation = base.Operation()
+    operation.transaction = transaction
+    operation.account = earn
+    operation.value = result_balance
+    operation.type = base.OperationType.CREDIT
+    operation.date = base.timezone.now()
+    operation.save()
+
 
 def accounting_period_distribute_results(period, form_data: dict):
-    # Obtem a ultima transacao
     transactions = base.Transaction.objects.for_period(period)
 
     try:
@@ -105,71 +148,46 @@ def accounting_period_distribute_results(period, form_data: dict):
     except base.Transaction.DoesNotExist:
         return
 
-    transaction = base.Transaction()
-    transaction.period = period
-    transaction.user = period.user
-    transaction.title = "Distribuição de Resultados"
-    transaction.description = ""
-    transaction.next = None
-    transaction.save()
-
-    previous.next = transaction
-    previous.save()
-
     result = base.Account.objects.get_result(period.user)
     operations = result.account_operation.filter(transaction__period=period)
 
-    credit_sum = 0
-    debit_sum = 0
+    credit_sum = operations.filter(type=base.OperationType.CREDIT).aggregate(
+        credit_sum=base.Sum("value", default=0)
+    )["credit_sum"]
 
-    for operation in operations:
-        value = operation.value
-        if operation.is_credit():
-            credit_sum += value
-        elif operation.is_debit():
-            debit_sum += value
-        else:
-            raise ValueError
+    debit_sum = operations.filter(type=base.OperationType.DEBIT).aggregate(
+        debit_sum=base.Sum("value", default=0)
+    )["debit_sum"]
 
-    if credit_sum > debit_sum:
-        # Lucro
-        operation = base.Operation()
-        operation.transaction = transaction
-        operation.account = result
-        operation.value = credit_sum - debit_sum
-        operation.type = base.OperationType.DEBIT
-        operation.date = base.timezone.now()
-        operation.save()
+    result_balance = abs(debit_sum - credit_sum)
 
-        operation = base.Operation()
-        operation.transaction = transaction
-        operation.account = form_data["earn_account"]
-        operation.value = credit_sum - debit_sum
-        operation.type = base.OperationType.CREDIT
-        operation.date = base.timezone.now()
-        operation.save()
+    if result_balance > 0:
+        transaction = base.Transaction()
+        transaction.period = period
+        transaction.user = period.user
+        transaction.title = "Distribuição de Resultados"
+        transaction.description = ""
+        transaction.next = None
+        transaction.save()
 
-    elif debit_sum > credit_sum:
-        # Prejuizo
-        operation = base.Operation()
-        operation.transaction = transaction
-        operation.account = result
-        operation.value = debit_sum - credit_sum
-        operation.type = base.OperationType.CREDIT
-        operation.date = base.timezone.now()
-        operation.save()
+        previous.next = transaction
+        previous.save()
 
-        operation = base.Operation()
-        operation.transaction = transaction
-        operation.account = form_data["loss_account"]
-        operation.value = debit_sum - credit_sum
-        operation.type = base.OperationType.DEBIT
-        operation.date = base.timezone.now()
-        operation.save()
-    else:
-        raise ValueError("Caso ZERO não considerado...")
+        if credit_sum > debit_sum:
+            distribute_results_earn(
+                transaction=transaction,
+                result=result,
+                earn=form_data["earn_account"],
+                result_balance=result_balance,
+            )
 
-    # raise Exception
+        elif debit_sum > credit_sum:
+            distribute_results_loss(
+                transaction=transaction,
+                result=result,
+                loss=form_data["loss_account"],
+                result_balance=result_balance,
+            )
 
 
 def accounting_period_close_period(
