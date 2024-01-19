@@ -2,38 +2,37 @@ from django.db import models
 
 
 class AccountManager(models.Manager):
-
     def from_user(self, user):
         return self.model.objects.filter(user=user)
 
     def get_asset(self, user):
         return self.model.objects.get(
-            user=user, account_type=self.model.AccountTypeOfAccount.ASSET
+            user=user, account_type=self.model.AccountTypeChoices.ASSET
         )
 
     def get_result(self, user):
         return self.model.objects.get(
-            user=user, account_type=self.model.AccountTypeOfAccount.RESULT
+            user=user, account_type=self.model.AccountTypeChoices.RESULT
         )
 
     def get_liability(self, user):
         return self.model.objects.get(
-            user=user, account_type=self.model.AccountTypeOfAccount.LIABILITY
+            user=user, account_type=self.model.AccountTypeChoices.LIABILITY
         )
 
     def get_equity(self, user):
         return self.model.objects.get(
-            user=user, account_type=self.model.AccountTypeOfAccount.EQUITY
+            user=user, account_type=self.model.AccountTypeChoices.EQUITY
         )
 
     def get_revenue(self, user):
         return self.model.objects.get(
-            user=user, account_type=self.model.AccountTypeOfAccount.REVENUE
+            user=user, account_type=self.model.AccountTypeChoices.REVENUE
         )
 
     def get_expense(self, user):
         return self.model.objects.get(
-            user=user, account_type=self.model.AccountTypeOfAccount.EXPENSE
+            user=user, account_type=self.model.AccountTypeChoices.EXPENSE
         )
 
     def for_user(self, user, include_root=True):
@@ -41,9 +40,7 @@ class AccountManager(models.Manager):
         return (
             queryset
             if include_root
-            else queryset.filter(
-                account_type=self.model.AccountTypeOfAccount.SUBDIVISION
-            )
+            else queryset.filter(account_type=self.model.AccountTypeChoices.SUBDIVISION)
         )
 
 

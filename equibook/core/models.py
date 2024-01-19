@@ -171,8 +171,8 @@ class AccountingPeriod(models.Model):
 
 
 class Account(models.Model):
-    AccountTypeOfBalance = BalanceType
-    AccountTypeOfAccount = AccountType
+    BalanceTypeChoices = BalanceType
+    AccountTypeChoices = AccountType
 
     user = models.ForeignKey(
         "users.User",
