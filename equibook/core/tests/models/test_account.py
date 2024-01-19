@@ -53,10 +53,6 @@ class AccountModelTestCase(base.TestCase):
         self.assertEqual(acc2.id, path[1].id)
         self.assertEqual(acc3.id, path[2].id)
 
-    # TODO
-    def test_get_recursive_childrens(self):
-        ...
-
     def test_individual_balance_zero(self):
         period = base.create_period(self.user)
         _, debit, credit = base.create_children_accounts(self.user, root=self.asset)

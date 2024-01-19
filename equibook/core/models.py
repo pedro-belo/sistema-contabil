@@ -304,15 +304,6 @@ class Account(models.Model):
 
         return result
 
-    def get_recursive_childrens(self, period):
-        result = list(self.account_operation.filter(transaction__period=period))
-
-        for account in self.account_set.all():
-            operation_in_period = account.get_recursive_childrens(period=period)
-            result.extend(operation_in_period)
-
-        return result
-
     class Meta:
         verbose_name = "Conta"
         verbose_name_plural = "Contas"
