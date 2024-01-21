@@ -19,6 +19,7 @@ from .transaction import (  # NOQA
     create_transaction,
     move_transaction,
     transaction_delete,
+    get_transaction_details,
 )
 
 from .operation import (  # NOQA
@@ -27,8 +28,6 @@ from .operation import (  # NOQA
 )
 
 from .reports import (  # NOQA
-    get_transaction_details,
-    create_trial_balance,
     get_balance_accounts,
     get_result_accounts,
 )

@@ -4,10 +4,6 @@ from equibook.core.cache.transaction import cache_get_period_transactions
 from equibook.core.cache.account import cache_get_accounts
 
 
-def has_key(d: dict, k):
-    return k in d.keys()
-
-
 class TrialBalanceItem:
     def __init__(self, account_id: int, accounts_d: dict) -> None:
         self.accounts_d = accounts_d
@@ -86,7 +82,7 @@ class TrialBalance:
 
         self.cache_transactions = (
             kwargs["cache_transactions"]
-            if has_key(kwargs, "cache_transactions")
+            if base.has_key(kwargs, "cache_transactions")
             else cache_get_period_transactions(
                 period_id=transaction.period_id,
                 user_id=transaction.user_id,
@@ -95,7 +91,7 @@ class TrialBalance:
 
         self.cache_accounts = (
             kwargs["cache_accounts"]
-            if has_key(kwargs, "cache_accounts")
+            if base.has_key(kwargs, "cache_accounts")
             else cache_get_accounts(transaction.user_id)
         )
 

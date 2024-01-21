@@ -7,6 +7,7 @@ from django.db.models import QuerySet  # NOQA
 from equibook.users.models import User  # NOQA
 from django.db.transaction import atomic  # NOQA
 from equibook.core.cache.transaction import cache_get_period_transactions  # NOQA
+from equibook.core.cache.account import cache_get_accounts
 
 from equibook.core.models import (  # NOQA
     Transaction,
@@ -29,5 +30,10 @@ from equibook.core.forms import (  # NOQA
     AccountingPeriodCreateForm,
 )
 
+
 def create_dict(items, key="id"):
     return {i[key]: i for i in items}
+
+
+def has_key(d: dict, k):
+    return k in d.keys()
