@@ -99,13 +99,11 @@ def get_transaction_details(transaction: base.Transaction, **kwargs):
         "title": transaction.title,
         "period_id": transaction.period_id,
         "archived": transaction.archived,
-        "operations": [],
+        "has_next": transaction.has_next(within_period=True),
+        "has_previous": transaction.has_previous(within_period=True),
         "debit_sum": 0,
         "credit_sum": 0,
-        "dc_cd_sub": 0,
-        "has_next": transaction.next is not None,
-        "has_previous": (getattr(transaction, "previous", None)) is not None
-        and (transaction.previous.period == transaction.period),
+        "operations": [],
     }
 
     cache_transactions = (
