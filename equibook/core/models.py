@@ -204,9 +204,7 @@ class Account(models.Model):
         blank=True,
     )
 
-    root_type = models.PositiveSmallIntegerField(
-        choices=AccountType.choices, null=True
-    )
+    root_type = models.PositiveSmallIntegerField(choices=AccountType.choices, null=True)
 
     objects: AccountManager = AccountManager()
 
@@ -362,6 +360,22 @@ class Transaction(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     objects: TransactionManager = TransactionManager()
+
+    def has_next(self, within_period: bool = True):
+        next = self.next
+
+        if next is None:
+            return False
+
+        return True if not within_period else self.period_id == next.period_id
+
+    def has_previous(self, within_period: bool = True):
+        previous = getattr(self, "previous", None)
+
+        if previous is None:
+            return False
+
+        return True if not within_period else self.previous.period_id == self.period_id
 
     def __str__(self) -> str:
         return self.title
