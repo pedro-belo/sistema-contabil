@@ -102,3 +102,52 @@ def create_uploadfile(name):
 
 def url_login_next(next: str):
     return reverse("users:login") + "?next=" + next
+
+def setup_accounting_scenario(user, period):
+    _, _, asset = create_children_accounts(user, root=facade.Account.objects.get_asset(user))
+    _, equity, _ = create_children_accounts(user, root=facade.Account.objects.get_equity(user))
+    _, _, expense = create_children_accounts(user, root=facade.Account.objects.get_expense(user))
+    _, revenue, _ = create_children_accounts(user, root=facade.Account.objects.get_revenue(user))
+
+    # AUMENTO DE CAPITAL
+    # ASSET: 1000, EQUITY: 1000
+    create_debit_and_credit(
+        period=period, value=1000, debit=asset, credit=equity
+    )
+
+    # GASTO COM X
+    # ASSET: 1000 - 400 = 600
+    # EXPENSE: 400
+    create_debit_and_credit(
+        period=period, value=400, debit=expense, credit=asset
+    )
+
+    # ~GASTO
+    # ASSET: 600 + 200 = 800
+    # EXPENSE: 400 - 200 = 200
+    create_debit_and_credit(
+        period=period, value=200, debit=asset, credit=expense
+    )
+
+    # RECEITA COM A
+    # ASSET: 800 + 600 = 1400
+    # REVENUE: 600
+    create_debit_and_credit(
+        period=period, value=600, debit=asset, credit=revenue
+    )
+
+    # ~RECEITA
+    # ASSET: 1300
+    # REVENUE: 500
+    create_debit_and_credit(
+        period=period, value=100, debit=revenue, credit=asset
+    )
+
+    # Exense = Revenue
+    # EXPENSE: 200 + 300 = 500
+    # ASSET: 1300 - 300 = 1000
+    create_debit_and_credit(
+        period=period, value=300, debit=expense, credit=asset
+    )
+
+    return asset, equity, expense, revenue

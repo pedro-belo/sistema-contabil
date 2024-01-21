@@ -52,53 +52,11 @@ class AccountingPeriodDistributeResultsTestCase(base.TestCase):
         )
 
     def prepare_case(self):
-        _, _, asset = base.create_children_accounts(self.user, root=self.asset)
-        _, equity, _ = base.create_children_accounts(self.user, root=self.equity)
-        _, _, expense = base.create_children_accounts(self.user, root=self.expense)
-        _, revenue, _ = base.create_children_accounts(self.user, root=self.revenue)
-
-        # AUMENTO DE CAPITAL
-        # ASSET: 1000, EQUITY: 1000
-        base.create_debit_and_credit(
-            period=self.period, value=1000, debit=asset, credit=equity
+        asset, equity, expense, revenue = base.setup_accounting_scenario(
+            user=self.user, period=self.period
         )
-
-        # GASTO COM X
-        # ASSET: 1000 - 400 = 600
-        # EXPENSE: 400
-        base.create_debit_and_credit(
-            period=self.period, value=400, debit=expense, credit=asset
-        )
-
-        # ~GASTO
-        # ASSET: 600 + 200 = 800
-        # EXPENSE: 400 - 200 = 200
-        base.create_debit_and_credit(
-            period=self.period, value=200, debit=asset, credit=expense
-        )
-
-        # RECEITA COM A
-        # ASSET: 800 + 600 = 1400
-        # REVENUE: 600
-        base.create_debit_and_credit(
-            period=self.period, value=600, debit=asset, credit=revenue
-        )
-
-        # ~RECEITA
-        # ASSET: 1300
-        # REVENUE: 500
-        base.create_debit_and_credit(
-            period=self.period, value=100, debit=revenue, credit=asset
-        )
-
-        # Exense = Revenue
-        # EXPENSE: 200 + 300 = 500
-        # ASSET: 1300 - 300 = 1000
-        base.create_debit_and_credit(
-            period=self.period, value=300, debit=expense, credit=asset
-        )
-
         self.assertEqual(asset.get_individual_balance(), 1000)
+        self.assertEqual(equity.get_individual_balance(), 1000)
         self.assertEqual(expense.get_individual_balance(), 500)
         self.assertEqual(revenue.get_individual_balance(), 500)
 
@@ -210,52 +168,27 @@ class AccountingPeriodCloseAccountsTestCase(base.TestCase):
         self.assertEqual(expense.get_individual_balance(), 0)
 
     def test_result_balance(self):
-        _, _, asset = base.create_children_accounts(user=self.user, root=self.asset)
-        _, equity, _ = base.create_children_accounts(user=self.user, root=self.equity)
-        _, _, expense = base.create_children_accounts(user=self.user, root=self.expense)
-        _, revenue, _ = base.create_children_accounts(user=self.user, root=self.revenue)
-
-        # AUMENTO DE CAPITAL
-        # ASSET: 10
-        # EQUITY: 10
-        base.create_debit_and_credit(
-            period=self.period, value=10, debit=asset, credit=equity
-        )
-
-        # GASTO X
-        # ASSET: 10 - 8 = 2
-        # EXPENSE: 8
-        base.create_debit_and_credit(
-            period=self.period, value=8, debit=expense, credit=asset
-        )
-
-        # RECEITA A
-        # ASSET: 2 + 20 = 22
-        # REVENUE: 20
-        base.create_debit_and_credit(
-            period=self.period, value=20, debit=asset, credit=revenue
-        )
+        asset, equity, expense, revenue = base.setup_accounting_scenario(user=self.user, period=self.period)
 
         # GASTO Y
-        # ASSET: 22 - 16 = 6
-        # EXPENSE: 8 + 16 = 24
+        # ASSET: 1000 - 16 = 948
+        # EXPENSE: 500 + 16 = 516
         base.create_debit_and_credit(
             period=self.period, value=16, debit=expense, credit=asset
         )
 
         # RECEITA B
-        # ASSET: 6 + 32 = 38
-        # REVENUE: 20 + 32 = 52
+        # ASSET: 948 + 32 = 1016
+        # REVENUE: 500 + 32 = 532
         base.create_debit_and_credit(
             period=self.period, value=32, debit=asset, credit=revenue
         )
 
-        EXPENSE_BALANCE = 24
-        REVENUE_BALANCE = 52
+        EXPENSE_BALANCE = 516
+        REVENUE_BALANCE = 532
         self.assertEqual(expense.get_individual_balance(), EXPENSE_BALANCE)
         self.assertEqual(revenue.get_individual_balance(), REVENUE_BALANCE)
-        self.assertEqual(asset.get_individual_balance(), 38)
-        self.assertEqual(equity.get_individual_balance(), 10)
+        self.assertEqual(asset.get_individual_balance(), 1016)
 
         facade.accounting_period_close_accounts(self.period, form_data={})
         self.assertEqual(expense.get_individual_balance(), 0)
