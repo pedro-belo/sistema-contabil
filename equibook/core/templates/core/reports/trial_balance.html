@@ -4,7 +4,7 @@
 
 {% load to_current_currency %}
 
-{% block head_title %}Balancete de Verificação{% endblock %}
+{% block head_title %}trial_balance de Verificação{% endblock %}
 
 {% block content %}
 
@@ -29,7 +29,7 @@
     </thead>
 
     <tbody>
-        {% for item in balancete.accounts.values %}
+        {% for item in trial_balance.accounts %}
         <tr>
             <td>
                 <p class="fw-bold m-0">{{item.name}}</p>
@@ -39,18 +39,18 @@
                     {% endfor %}
                 </small>
             </td>
-            <td class="text-end">{{item.moviment_debit|to_current_currency:app_settings|intcomma}} </td>
-            <td class="text-end">{{item.moviment_credit|to_current_currency:app_settings|intcomma}} </td>
+            <td class="text-end">{{item.debit_sum|to_current_currency:app_settings|intcomma}} </td>
+            <td class="text-end">{{item.credit_sum|to_current_currency:app_settings|intcomma}} </td>
             <td class="text-end">{{item.balance_debit|to_current_currency:app_settings|intcomma}} </td>
             <td class="text-end">{{item.balance_credit|to_current_currency:app_settings|intcomma}} </td>
         </tr>
         {% endfor %}
         <tr class="bg-light bg-opacity-75">
             <td>Σ</td>
-            <td class="text-end">{{balancete.moviment_d_sum|to_current_currency:app_settings|intcomma}} </td>
-            <td class="text-end">{{balancete.moviment_c_sum|to_current_currency:app_settings|intcomma}} </td>
-            <td class="text-end">{{balancete.balance_d_sum|to_current_currency:app_settings|intcomma}} </td>
-            <td class="text-end">{{balancete.balance_c_sum|to_current_currency:app_settings|intcomma}} </td>
+            <td class="text-end">{{trial_balance.moviment_debit_sum|to_current_currency:app_settings|intcomma}} </td>
+            <td class="text-end">{{trial_balance.moviment_credit_sum|to_current_currency:app_settings|intcomma}} </td>
+            <td class="text-end">{{trial_balance.balance_debit_sum|to_current_currency:app_settings|intcomma}} </td>
+            <td class="text-end">{{trial_balance.balance_credit_sum|to_current_currency:app_settings|intcomma}} </td>
         </tr>
     </tbody>
 

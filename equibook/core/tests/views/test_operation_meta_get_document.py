@@ -1,16 +1,20 @@
 from equibook.core.tests import base
 from equibook.core import facade
 
-@base.override_settings(MEDIA_ROOT="/tmp")
-class OperationMetaGetDocumentViewTests(base.TestCase):
 
+@base.override_settings(MEDIA_ROOT="/tmp")
+class OperationMetaGetDocumentViewTestCase(base.TestCase):
     def setUp(self) -> None:
         self.user = base.create_default_user()
         self.period = base.create_period(self.user)
-        _, _, self.account = base.create_children_accounts(self.user)
 
-        self.transaction = base.create_credts_and_debits(
-            account=self.account, account_period=self.period, value=10, credit=False
+        _, _, debit = base.create_children_accounts(
+            user=self.user,
+            root=facade.Account.objects.get_asset(self.user),
+        )
+
+        self.transaction = base.create_debit_and_credit(
+            period=self.period, value=10, debit=debit
         )
 
         self.operation = self.transaction.transaction_operation.first()
@@ -23,8 +27,11 @@ class OperationMetaGetDocumentViewTests(base.TestCase):
             description="description", document=document, operation=self.operation
         )
 
-    def _test_get_authenticated(self, close_period: bool):
+        self.url_download = base.reverse(
+            "core:operation-meta-download", args=[self.operation_meta.id]
+        )
 
+    def _test_get_authenticated(self, close_period: bool):
         if close_period:
             self.period.status = facade.AccountingPeriod.Status.CLOSED
             self.period.save()
@@ -32,11 +39,13 @@ class OperationMetaGetDocumentViewTests(base.TestCase):
 
         self.client.force_login(self.user)
 
-        response = self.client.get(
-            base.reverse("core:operation-meta-download", args=[self.operation_meta.id])
-        )
+        response = self.client.get(self.url_download)
+
         date = str(base.datetime.now())[0:10]
-        content_disposition = f"attachment; filename=\"{self.operation_meta.document.name} - {date}"
+
+        content_disposition = (
+            f'attachment; filename="{self.operation_meta.document.name} - {date}'
+        )
         self.assertTrue(response["Content-Disposition"].startswith(content_disposition))
         self.assertEqual(response.content, self.document_content)
         self.assertEqual(response.status_code, 200)
@@ -48,15 +57,6 @@ class OperationMetaGetDocumentViewTests(base.TestCase):
         self._test_get_authenticated(close_period=True)
 
     def test_get_unauthenticated(self):
-        expected_url = (
-            base.reverse("users:login")
-            + "?next="
-            + base.reverse("core:operation-meta-download", args=[self.operation_meta.id])
-        )
-
-        response = self.client.get(
-            base.reverse("core:operation-meta-download", args=[self.operation_meta.id])
-        )
-
+        response = self.client.get(self.url_download)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, expected_url)
+        self.assertEqual(response.url, base.url_login_next(self.url_download))

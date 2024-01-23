@@ -6,8 +6,8 @@ from equibook.core.models import (  # NOQA
     OperationMeta,
     Currency,
     OperationType,
-    TypeOfAccount,
-    TypeOfBalance,
+    AccountType,
+    BalanceType,
     AccountingPeriod,
 )
 
@@ -19,6 +19,7 @@ from .transaction import (  # NOQA
     create_transaction,
     move_transaction,
     transaction_delete,
+    get_transaction_details,
 )
 
 from .operation import (  # NOQA
@@ -27,8 +28,6 @@ from .operation import (  # NOQA
 )
 
 from .reports import (  # NOQA
-    get_transaction_details,
-    create_trial_balance,
     get_balance_accounts,
     get_result_accounts,
 )
@@ -36,7 +35,7 @@ from .reports import (  # NOQA
 from .user import user_setup, user_has_period  # NOQA
 
 from .accounting_period import (  # NOQA
-    accounting_period_create,
+    create_first_account_period,
     accounting_period_close_accounts,
     accounting_period_distribute_results,
     accounting_period_close_period,
@@ -52,3 +51,5 @@ from equibook.core.cache.account import (  # NOQA
     cache_get_accounts,
     cache_get_accounts_refresh,
 )
+
+from equibook.core.facade.trial_balance import TrialBalance

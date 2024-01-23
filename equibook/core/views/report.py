@@ -20,7 +20,7 @@ class BalanceAccountsView(BalanceOrResultAccountsView):
         return facade.get_balance_accounts(user)
 
 
-class ResultsView(BalanceOrResultAccountsView):
+class ResultAccountsView(BalanceOrResultAccountsView):
     template_name = "core/reports/result_accounts.html"
     result_accounts_active = True
 
@@ -32,14 +32,15 @@ class TrialBalanceView(base.DetailView):
     template_name = "core/reports/trial_balance.html"
 
     def get_queryset(self):
-        return facade.Transaction.objects.all()
+        return facade.Transaction.objects.for_user(self.request.user)
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         cache_transactions = facade.cache_get_user_transactions(self.request.user.id)
-        context_data["balancete"] = facade.create_trial_balance(
-            transaction=self.get_object(), cache_transactions=cache_transactions
+        trial_balance = facade.TrialBalance(
+            self.get_object(), cache_transactions=cache_transactions
         )
+        context_data["trial_balance"] = trial_balance.get_results_sorted_by_name()
         return context_data
 
 
@@ -56,7 +57,7 @@ url_patterns = [
     ),
     base.path(
         "result-accounts/",
-        ResultsView.as_view(),
+        ResultAccountsView.as_view(),
         name="result-accounts",
     ),
 ]

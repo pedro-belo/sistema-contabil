@@ -2,12 +2,15 @@ from equibook.core.facade import base
 
 
 @base.atomic
-def accounting_period_create(
-    user: base.User, form: base.AccountingPeriodCreateFirstForm
-):
-    accounting_period = form.save(commit=False)
+def create_first_account_period(user: base.User, form_data: dict):
+    if form_data["end_date"] < form_data["start_date"]:
+        raise ValueError("Data final do período deve ser maior ou igual a data inicial")
+
+    accounting_period = base.AccountingPeriod()
     accounting_period.status = base.AccountingPeriod.Status.IN_PROGRESS
     accounting_period.user = user
+    accounting_period.start_date = form_data["start_date"]
+    accounting_period.end_date = form_data["end_date"]
     accounting_period.save()
 
     setting = base.Setting.objects.get(user=user)
@@ -17,13 +20,57 @@ def accounting_period_create(
     return accounting_period
 
 
-def accounting_period_close_accounts(period, form):
+def close_account_revenue(
+    result: base.Account, revenue: base.Account, transaction: base.Transaction
+):
+    # "Zerando" saldo da conta de Receita (revenue)
+    revenue_balance = revenue.get_individual_balance()
+    operation = base.Operation()
+    operation.transaction = transaction
+    operation.account = revenue
+    operation.value = revenue_balance
+    operation.type = base.OperationType.DEBIT
+    operation.date = base.timezone.now()
+    operation.save()
+
+    # Transferência do saldo da conta de Receita para a conta de Resultado.
+    operation = base.Operation()
+    operation.transaction = transaction
+    operation.account = result
+    operation.value = revenue_balance
+    operation.type = base.OperationType.CREDIT
+    operation.date = base.timezone.now()
+    operation.save()
+
+
+def close_account_expense(
+    result: base.Account, expense: base.Account, transaction: base.Transaction
+):
+    expense_balance = expense.get_individual_balance()
+    operation = base.Operation()
+    operation.transaction = transaction
+    operation.account = expense
+    operation.value = expense_balance
+    operation.type = base.OperationType.CREDIT
+    operation.date = base.timezone.now()
+    operation.save()
+
+    operation = base.Operation()
+    operation.transaction = transaction
+    operation.account = result
+    operation.value = expense_balance
+    operation.type = base.OperationType.DEBIT
+    operation.date = base.timezone.now()
+    operation.save()
+
+
+def accounting_period_close_accounts(period, form_data):
     transactions = base.Transaction.objects.for_period(period)
 
     try:
         previous = transactions.get(next=None)
     except base.Transaction.DoesNotExist:
-        raise ValueError("O período não possui nenhum lançamento.")
+        return
 
     transaction = base.Transaction()
     transaction.period = period
@@ -38,131 +85,118 @@ def accounting_period_close_accounts(period, form):
 
     result = base.Account.objects.get_result(period.user)
 
-    # Encerramento de receitas
-    revenue_ac = base.Account.objects.get_revenue(period.user)
-    for revenue in revenue_ac.get_recursive_childrens(period):
-        # Fechando...
-        operation = base.Operation()
-        operation.transaction = transaction
-        operation.account = revenue.account
-        operation.value = revenue.value
-        operation.type = base.OperationType.DEBIT
-        operation.date = base.timezone.now()
-        operation.save()
+    revenue_root = base.Account.objects.get_revenue(period.user)
+    for revenue in revenue_root.get_children():
+        close_account_revenue(result=result, revenue=revenue, transaction=transaction)
 
-        # Transferindo saldo
-        operation = base.Operation()
-        operation.transaction = transaction
-        operation.account = result
-        operation.value = revenue.value
-        operation.type = base.OperationType.CREDIT
-        operation.date = base.timezone.now()
-        operation.save()
-
-    expenses_ac = base.Account.objects.get_expense(period.user)
-    for expenses in expenses_ac.get_recursive_childrens(period):
-        # Fechando...
-        operation = base.Operation()
-        operation.transaction = transaction
-        operation.account = expenses.account
-        operation.value = expenses.value
-        operation.type = base.OperationType.CREDIT
-        operation.date = base.timezone.now()
-        operation.save()
-
-        # Transferindo saldo
-        operation = base.Operation()
-        operation.transaction = transaction
-        operation.account = result
-        operation.value = expenses.value
-        operation.type = base.OperationType.DEBIT
-        operation.date = base.timezone.now()
-        operation.save()
+    expense_root = base.Account.objects.get_expense(period.user)
+    for expense in expense_root.get_children():
+        close_account_expense(result=result, expense=expense, transaction=transaction)
 
 
-def accounting_period_distribute_results(period, form: base.AccountingPeriodCloseForm):
-    # Obtem a ultima transacao
+def distribute_results_loss(
+    transaction: base.Transaction,
+    result: base.Account,
+    loss: base.Account,
+    result_balance,
+):
+    operation = base.Operation()
+    operation.transaction = transaction
+    operation.account = result
+    operation.value = result_balance
+    operation.type = base.OperationType.CREDIT
+    operation.date = base.timezone.now()
+    operation.save()
+
+    operation = base.Operation()
+    operation.transaction = transaction
+    operation.account = loss
+    operation.value = result_balance
+    operation.type = base.OperationType.DEBIT
+    operation.date = base.timezone.now()
+    operation.save()
+
+
+def distribute_results_earn(
+    transaction: base.Transaction,
+    result: base.Account,
+    earn: base.Account,
+    result_balance,
+):
+    operation = base.Operation()
+    operation.transaction = transaction
+    operation.account = result
+    operation.value = result_balance
+    operation.type = base.OperationType.DEBIT
+    operation.date = base.timezone.now()
+    operation.save()
+
+    operation = base.Operation()
+    operation.transaction = transaction
+    operation.account = earn
+    operation.value = result_balance
+    operation.type = base.OperationType.CREDIT
+    operation.date = base.timezone.now()
+    operation.save()
+
+
+def accounting_period_distribute_results(period, form_data: dict):
     transactions = base.Transaction.objects.for_period(period)
 
     try:
         previous = transactions.get(next=None)
     except base.Transaction.DoesNotExist:
-        raise ValueError("O período não possui nenhum lançamento.")
-
-    transaction = base.Transaction()
-    transaction.period = period
-    transaction.user = period.user
-    transaction.title = "Distribuição de Resultados"
-    transaction.description = ""
-    transaction.next = None
-    transaction.save()
-
-    previous.next = transaction
-    previous.save()
+        return
 
     result = base.Account.objects.get_result(period.user)
     operations = result.account_operation.filter(transaction__period=period)
 
-    credit_sum = 0
-    debit_sum = 0
+    credit_sum = operations.filter(type=base.OperationType.CREDIT).aggregate(
+        credit_sum=base.Sum("value", default=0)
+    )["credit_sum"]
 
-    for operation in operations:
-        value = operation.value
-        if operation.is_credit():
-            credit_sum += value
-        elif operation.is_debit():
-            debit_sum += value
-        else:
-            raise ValueError
+    debit_sum = operations.filter(type=base.OperationType.DEBIT).aggregate(
+        debit_sum=base.Sum("value", default=0)
+    )["debit_sum"]
 
-    if credit_sum > debit_sum:
-        # Lucro
-        operation = base.Operation()
-        operation.transaction = transaction
-        operation.account = result
-        operation.value = credit_sum - debit_sum
-        operation.type = base.OperationType.DEBIT
-        operation.date = base.timezone.now()
-        operation.save()
+    result_balance = abs(debit_sum - credit_sum)
 
-        operation = base.Operation()
-        operation.transaction = transaction
-        operation.account = form.cleaned_data["earn_account"]
-        operation.value = credit_sum - debit_sum
-        operation.type = base.OperationType.CREDIT
-        operation.date = base.timezone.now()
-        operation.save()
+    if result_balance > 0:
+        transaction = base.Transaction()
+        transaction.period = period
+        transaction.user = period.user
+        transaction.title = "Distribuição de Resultados"
+        transaction.description = ""
+        transaction.next = None
+        transaction.save()
 
-    elif debit_sum > credit_sum:
-        # Prejuizo
-        operation = base.Operation()
-        operation.transaction = transaction
-        operation.account = result
-        operation.value = debit_sum - credit_sum
-        operation.type = base.OperationType.CREDIT
-        operation.date = base.timezone.now()
-        operation.save()
+        previous.next = transaction
+        previous.save()
 
-        operation = base.Operation()
-        operation.transaction = transaction
-        operation.account = form.cleaned_data["loss_account"]
-        operation.value = debit_sum - credit_sum
-        operation.type = base.OperationType.DEBIT
-        operation.date = base.timezone.now()
-        operation.save()
-    else:
-        raise ValueError("Caso ZERO não considerado...")
+        if credit_sum > debit_sum:
+            distribute_results_earn(
+                transaction=transaction,
+                result=result,
+                earn=form_data["earn_account"],
+                result_balance=result_balance,
+            )
 
-    # raise Exception
+        elif debit_sum > credit_sum:
+            distribute_results_loss(
+                transaction=transaction,
+                result=result,
+                loss=form_data["loss_account"],
+                result_balance=result_balance,
+            )
 
 
-def accounting_period_close_period(
-    period: base.AccountingPeriod, form: base.AccountingPeriodCreateForm
-):
+def accounting_period_close_period(period: base.AccountingPeriod, form_data: dict):
     period.status = base.AccountingPeriod.Status.CLOSED
     period.save()
 
-    accounting_period = form.save(commit=False)
+    accounting_period = base.AccountingPeriod()
+    accounting_period.start_date = form_data["start_date"]
+    accounting_period.end_date = form_data["end_date"]
     accounting_period.status = base.AccountingPeriod.Status.IN_PROGRESS
     accounting_period.user = period.user
     accounting_period.save()

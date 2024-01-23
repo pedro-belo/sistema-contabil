@@ -12,7 +12,11 @@ class AccountingPeriodCreateFirstView(base.FormView):
         return base.AccountingPeriodCreateFirstForm
 
     def form_valid(self, form: base.AccountingPeriodCreateFirstForm):
-        facade.accounting_period_create(user=self.request.user, form=form)
+        facade.create_first_account_period(
+            user=self.request.user,
+            form_data=form.cleaned_data,
+        )
+
         base.messages.add_message(
             request=self.request,
             level=base.messages.SUCCESS,
@@ -27,10 +31,12 @@ class AccountingPeriodDetailView(base.FormView):
     accounting_period_detail_active = True
 
     def get_form_class(self):
-        if self.period.in_progress():
+        if self.period and self.period.in_progress():
             return base.AccountingPeriodCreateForm
-        if self.period.closing_accounts():
+
+        if self.period and self.period.closing_accounts():
             return base.AccountingPeriodCloseForm
+
         raise base.PageNotFound()
 
     def _get_form_kwargs_in_progress(self):
@@ -75,14 +81,14 @@ class AccountingPeriodDetailView(base.FormView):
         return base.redirect("core:accounting-period-detail")
 
     def _form_valid_closing_accounts(self, form):
-        facade.accounting_period_close_accounts(self.period, form)
-        facade.accounting_period_distribute_results(self.period, form)
-        facade.accounting_period_close_period(self.period, form)
+        facade.accounting_period_close_accounts(self.period, form.cleaned_data)
+        facade.accounting_period_distribute_results(self.period, form.cleaned_data)
+        facade.accounting_period_close_period(self.period, form.cleaned_data)
         return base.redirect("core:accounting-period-detail")
 
     @base.atomic
     def form_valid(self, form):
-        if self.period.in_progress():
+        if self.period.in_progress() and self.period.is_period_closeable():
             return self._form_valid_in_progress(form)
 
         if self.period.closing_accounts():

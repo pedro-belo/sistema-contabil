@@ -110,7 +110,7 @@ class OperationType(models.IntegerChoices):
     DEBIT = 2, "Débito"
 
 
-class TypeOfAccount(models.IntegerChoices):
+class AccountType(models.IntegerChoices):
     ASSET = 1, "Ativo"
     LIABILITY = 2, "Passivo"
     EQUITY = 3, "Patrimônio Líquido"
@@ -120,7 +120,7 @@ class TypeOfAccount(models.IntegerChoices):
     RESULT = 7, "Resultado"
 
 
-class TypeOfBalance(models.IntegerChoices):
+class BalanceType(models.IntegerChoices):
     CREDIT = 1, "Credor"
     DEBIT = 2, "Devedor"
     UNDEF = 3, "Indefinido"
@@ -171,8 +171,8 @@ class AccountingPeriod(models.Model):
 
 
 class Account(models.Model):
-    AccountTypeOfBalance = TypeOfBalance
-    AccountTypeOfAccount = TypeOfAccount
+    BalanceTypeChoices = BalanceType
+    AccountTypeChoices = AccountType
 
     user = models.ForeignKey(
         "users.User",
@@ -187,12 +187,12 @@ class Account(models.Model):
     )
 
     balance_type = models.PositiveSmallIntegerField(
-        choices=TypeOfBalance.choices,
+        choices=BalanceType.choices,
         verbose_name="Tipo de Saldo",
     )
 
     account_type = models.PositiveSmallIntegerField(
-        choices=TypeOfAccount.choices,
+        choices=AccountType.choices,
         verbose_name="Tipo de Conta",
     )
 
@@ -204,10 +204,7 @@ class Account(models.Model):
         blank=True,
     )
 
-    # Performance reanson
-    root_type = models.PositiveSmallIntegerField(
-        choices=TypeOfAccount.choices, null=True
-    )
+    root_type = models.PositiveSmallIntegerField(choices=AccountType.choices, null=True)
 
     objects: AccountManager = AccountManager()
 
@@ -225,18 +222,18 @@ class Account(models.Model):
         )["credit_sum"]
 
         if self.account_type not in [
-            TypeOfAccount.ASSET,
-            TypeOfAccount.EQUITY,
-            TypeOfAccount.LIABILITY,
-            TypeOfAccount.EXPENSE,
-            TypeOfAccount.REVENUE,
-            TypeOfAccount.SUBDIVISION,
+            AccountType.ASSET,
+            AccountType.EQUITY,
+            AccountType.LIABILITY,
+            AccountType.EXPENSE,
+            AccountType.REVENUE,
+            AccountType.SUBDIVISION,
         ]:
             raise ValueError("Operação não definida")
 
         return (
             (debit_sum - credit_sum)
-            if self.balance_type == TypeOfBalance.DEBIT
+            if self.balance_type == BalanceType.DEBIT
             else credit_sum - debit_sum
         )
 
@@ -244,7 +241,7 @@ class Account(models.Model):
         result = 0
 
         for operation in self.account_operation.values("type", "value"):
-            if self.balance_type == TypeOfBalance.CREDIT:
+            if self.balance_type == BalanceType.CREDIT:
                 if operation["type"] == OperationType.CREDIT:
                     result += operation["value"]
                 elif operation["type"] == OperationType.DEBIT:
@@ -252,7 +249,7 @@ class Account(models.Model):
                 else:
                     raise ValueError
 
-            elif self.balance_type == TypeOfBalance.DEBIT:
+            elif self.balance_type == BalanceType.DEBIT:
                 if operation["type"] == OperationType.DEBIT:
                     result += operation["value"]
                 elif operation["type"] == OperationType.CREDIT:
@@ -272,7 +269,7 @@ class Account(models.Model):
         return result + self.total_operation_balance()
 
     def can_remove(self):
-        if self.account_type != TypeOfAccount.SUBDIVISION:
+        if self.account_type != AccountType.SUBDIVISION:
             return False
 
         if self.account_operation.count() > 0:
@@ -296,12 +293,11 @@ class Account(models.Model):
 
         return path
 
-    def get_recursive_childrens(self, period):
-        result = list(self.account_operation.filter(transaction__period=period))
+    def get_children(self):
+        result = [self]
 
         for account in self.account_set.all():
-            operation_in_period = account.get_recursive_childrens(period=period)
-            result.extend(operation_in_period)
+            result.extend(account.get_children())
 
         return result
 
@@ -364,6 +360,22 @@ class Transaction(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     objects: TransactionManager = TransactionManager()
+
+    def has_next(self, within_period: bool = True):
+        next = self.next
+
+        if next is None:
+            return False
+
+        return True if not within_period else self.period_id == next.period_id
+
+    def has_previous(self, within_period: bool = True):
+        previous = getattr(self, "previous", None)
+
+        if previous is None:
+            return False
+
+        return True if not within_period else self.previous.period_id == self.period_id
 
     def __str__(self) -> str:
         return self.title

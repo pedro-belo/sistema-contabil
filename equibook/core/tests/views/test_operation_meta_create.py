@@ -2,16 +2,25 @@ from equibook.core.tests import base
 from equibook.core import facade
 
 
-class OperationMetaCreateViewTests(base.TestCase):
+class OperationMetaCreateViewTestCase(base.TestCase):
     def setUp(self) -> None:
         self.user = base.create_default_user()
         self.period = base.create_period(self.user)
-        _, _, self.account = base.create_children_accounts(self.user)
 
-        self.transaction = base.create_credts_and_debits(
-            account=self.account, account_period=self.period, value=10, credit=False
+        _, _, debit = base.create_children_accounts(
+            user=self.user,
+            root=facade.Account.objects.get_asset(self.user),
         )
+
+        self.transaction = base.create_debit_and_credit(
+            period=self.period, value=10, debit=debit
+        )
+
         self.operation = self.transaction.transaction_operation.first()
+
+        self.url_create = base.reverse(
+            "core:operation-meta-create", args=[self.operation.id]
+        )
 
         document = base.create_uploadfile(name="BR-E11")
         self.document_name, self.document_content = document.name, document.read()
@@ -25,26 +34,13 @@ class OperationMetaCreateViewTests(base.TestCase):
 
     def test_get_authenticated(self):
         self.client.force_login(self.user)
-
-        response = self.client.get(
-            base.reverse("core:operation-meta-create", args=[self.operation.id])
-        )
-
+        response = self.client.get(self.url_create)
         self.assertEqual(response.status_code, 200)
 
     def test_get_unauthenticated(self):
-        expected_url = (
-            base.reverse("users:login")
-            + "?next="
-            + base.reverse("core:operation-meta-create", args=[self.operation.id])
-        )
-
-        response = self.client.get(
-            base.reverse("core:operation-meta-create", args=[self.operation.id])
-        )
-
+        response = self.client.get(self.url_create)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, expected_url)
+        self.assertEqual(response.url, base.url_login_next(self.url_create))
 
     @base.override_settings(MEDIA_ROOT="/tmp")
     def test_create_authenticated(self):
@@ -52,17 +48,14 @@ class OperationMetaCreateViewTests(base.TestCase):
 
         self.assertEqual(facade.OperationMeta.objects.count(), 0)
 
-        response = self.client.post(
-            base.reverse("core:operation-meta-create", args=[self.operation.id]),
-            data=self.form_data,
-        )
-        created = facade.OperationMeta.objects.last()
-
+        response = self.client.post(self.url_create, data=self.form_data)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(
             response.url,
             base.reverse("core:transaction-detail", args=[self.transaction.id]),
         )
+
+        created = facade.OperationMeta.objects.last()
         self.assertEqual(created.description, self.form_data["description"])
         self.assertTrue(created.document.name.startswith(self.document_name))
         self.assertEqual(created.document.read(), self.document_content)
@@ -78,28 +71,14 @@ class OperationMetaCreateViewTests(base.TestCase):
 
         self.assertEqual(facade.OperationMeta.objects.count(), 0)
 
-        response = self.client.post(
-            base.reverse("core:operation-meta-create", args=[self.operation.id]),
-            data=self.form_data,
-        )
+        response = self.client.post(self.url_create, data=self.form_data)
 
         self.assertEqual(response.status_code, 404)
         self.assertEqual(facade.OperationMeta.objects.count(), 0)
 
     def test_create_unauthenticated(self):
-        expected_url = (
-            base.reverse("users:login")
-            + "?next="
-            + base.reverse("core:operation-meta-create", args=[self.operation.id])
-        )
-
         self.assertEqual(facade.OperationMeta.objects.count(), 0)
-
-        response = self.client.post(
-            base.reverse("core:operation-meta-create", args=[self.operation.id]),
-            data=self.form_data,
-        )
-
+        response = self.client.post(self.url_create, data=self.form_data)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, expected_url)
+        self.assertEqual(response.url, base.url_login_next(self.url_create))
         self.assertEqual(facade.OperationMeta.objects.count(), 0)

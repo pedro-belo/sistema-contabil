@@ -1,3 +1,4 @@
+from decimal import Decimal  # NOQA
 from django.utils import timezone  # NOQA
 from django.db.models import Sum, F  # NOQA
 from datetime import datetime  # NOQA
@@ -6,16 +7,17 @@ from django.db.models import QuerySet  # NOQA
 from equibook.users.models import User  # NOQA
 from django.db.transaction import atomic  # NOQA
 from equibook.core.cache.transaction import cache_get_period_transactions  # NOQA
+from equibook.core.cache.account import cache_get_accounts
 
 from equibook.core.models import (  # NOQA
     Transaction,
     OperationType,
     Account,
     AccountingPeriod,
-    TypeOfBalance,
+    BalanceType,
     Operation,
     OperationMeta,
-    TypeOfAccount,
+    AccountType,
     Setting,
 )
 
@@ -29,14 +31,9 @@ from equibook.core.forms import (  # NOQA
 )
 
 
-def get_last_transaction(period: AccountingPeriod):
-    transactions = Transaction.objects.for_period(period)
-    return transactions.get(next=None) if transactions.count() > 0 else None
+def create_dict(items, key="id"):
+    return {i[key]: i for i in items}
 
 
-def get_first_transaction(period: AccountingPeriod):
-    transactions = cache_get_period_transactions(
-        period_id=period.id,
-        user_id=period.user_id,
-    )
-    return transactions[-1]
+def has_key(d: dict, k):
+    return k in d.keys()
