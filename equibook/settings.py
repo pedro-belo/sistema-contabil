@@ -30,7 +30,7 @@ DEBUG = config("DEBUG", cast=bool, default=False)
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv(), default="127.0.0.1, localhost")
 
-CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", cast=Csv(), default="127.0.0.1, localhost")
+CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", cast=Csv(), default="http://127.0.0.1, http://localhost")
 
 # Application definition
 
@@ -155,7 +155,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = config("STATIC_URL", default="static/")
-STATIC_ROOT = config("STATIC_ROOT", default=None)
+STATIC_ROOT = config("STATIC_ROOT", default="static/")
 
 MEDIA_URL = config("MEDIA_URL", default="")
 MEDIA_ROOT = config("MEDIA_ROOT", default="media/")

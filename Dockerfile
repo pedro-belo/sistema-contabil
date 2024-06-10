@@ -13,6 +13,11 @@ RUN apt-get install -y apt-utils
 # Instalação de Dependências para o psycopg.
 RUN apt-get install -y python3-dev libpq-dev
 
+# Setup nginx
+RUN apt-get install -y nginx
+COPY ./setup/nginx.conf /etc/nginx/sites-enabled/default
+RUN echo "daemon off;" >> /etc/nginx/nginx.conf
+
 # Criação de Usuário
 RUN adduser --group --system --no-create-home --disabled-login equibook
 
@@ -23,6 +28,7 @@ RUN chgrp equibook app
 # Setando o usuário equibook na sessão atual
 USER equibook:equibook
 
+
 # Altera o diretório corrente para o diretório que contém o app
 WORKDIR /app
 
@@ -31,6 +37,8 @@ RUN python -m venv .venv
 
 # Copia os arquivos da aplicação para a imagem
 COPY --chown=equibook:equibook ./equibook/ ./equibook
+COPY --chown=equibook:equibook ./equibook/core/static/ /var/www/html/static/
+
 COPY --chown=equibook:equibook .prod.env ./.env
 COPY --chown=equibook:equibook manage.py requirements.txt ./setup/entrypoint.sh ./
 
