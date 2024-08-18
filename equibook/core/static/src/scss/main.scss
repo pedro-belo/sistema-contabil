@@ -1,0 +1,23 @@
+// Bootstrap 
+$primary: #702b9e;
+$danger: #ed2553;
+
+$body-bg: #000;
+$body-color: white;
+
+@import "../../node_modules/material-icons/iconfont/material-icons.css";
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+// Material Icons
+.material-icons-outlined {
+    color: white;
+}
+
+.btn-icon {
+    background-color: rgba(0, 0, 0, 0.25);
+    border: 0;
+}
+
+.btn-icon:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+}

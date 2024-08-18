@@ -15,8 +15,8 @@
 
   {% for transaction in transactions %}
   <div class="col-12" id="{{transaction.detail.id}}">
-    <div class="card text-center my-4 {% if DARK_MODE %}bg-secondary bg-opacity-25 text-white border border-secondary{% else %}border-0 shadow{% endif %}">
-      <div class="card-header py-2 fs-5 fw-bold d-flex justify-content-between align-items-center" {% if DARK_MODE %}{% else %}bg-dark text-white{% endif %}>
+    <div class="card text-center my-4 bg-secondary bg-opacity-25 text-white border-0 shadow">
+      <div class="card-header py-2 fs-5 fw-bold d-flex justify-content-between align-items-center">
         {{transaction.detail.id}}: {{transaction.detail.title}}
         <div>
           <a class="btn btn-secondary bg-secondary bg-opacity-25" title="Detalhes Sobre a Transação"
@@ -31,7 +31,7 @@
       </div>
       <div class="card-body p-0">
         <div class="table-responsive">
-          <table class="table table-sm m-0 {% if DARK_MODE %}table-dark{% else %}{% endif %}">
+          <table class="table table-sm m-0 table-dark">
             <thead>
               <tr>
                 <th>Data</th>
@@ -51,7 +51,7 @@
                 <td>{{operation.credit|to_current_currency:app_settings|intcomma}}</td>
                 <td>{{operation.get_type_display}}</td>
                 <td>{{operation.account_balance|to_current_currency:app_settings|intcomma}} <span
-                    class="badge {% if DARK_MODE %}bg-secondary{% else %}bg-dark{% endif %}">{{app_settings.current_currency.label}}</span></td>
+                    class="badge bg-secondary">{{app_settings.current_currency.label}}</span></td>
               </tr>
               {% endfor %}
               <tr>

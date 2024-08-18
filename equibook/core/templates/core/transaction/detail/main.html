@@ -8,9 +8,9 @@
 <header class="mt-4 p-4 text-center">
   <h1>{{transaction.title}} ({{transaction.id}})</h1>
   {% if transaction.period.id == view.period.id %}
-    {% if transaction.archived %}
-    <p class="badge {% if DARK_MODE %}bg-danger{% else %}bg-dark{% endif %}">Esta transação foi arquivada</p>
-    {% endif %}
+  {% if transaction.archived %}
+  <p class="badge bg-danger">Esta transação foi arquivada</p>
+  {% endif %}
   {% endif %}
 </header>
 
@@ -19,12 +19,12 @@
 
   <li class="nav-item">
     {% if transaction.previous %}
-    <a class="btn mx-1 shadow-sm btn-icon {% if DARK_MODE %}border border-secondary{% else %}btn-light{% endif %}" title="Transação Antecedente"
+    <a class="btn mx-1 shadow-sm btn-icon border border-secondary" title="Transação Antecedente"
       href="{% url 'core:transaction-detail' pk=transaction.previous.id %}">
       <span class="material-icons-outlined">navigate_before</span>
     </a>
     {% else %}
-    <a class="btn mx-1 shadow-sm btn-icon {% if DARK_MODE %}border border-secondary{% else %}btn-light{% endif %} disabled" href="#">
+    <a class="btn mx-1 shadow-sm btn-icon border border-secondary disabled" href="#">
       <span class="material-icons-outlined">navigate_before</span>
     </a>
     {% endif %}
@@ -32,21 +32,21 @@
 
   {% if view.period.id == transaction.period_id%}
   <li class="nav-item">
-    <a class="btn mx-1 shadow-sm btn-icon {% if DARK_MODE %}border border-secondary{% else %}btn-light{% endif %}" title="Nova operação"
+    <a class="btn mx-1 shadow-sm btn-icon border border-secondary" title="Nova operação"
       href="{% url 'core:operation-create' transaction_id=transaction.id %}">
       <span class="material-icons-outlined">add</span>
     </a>
   </li>
   {% else %}
   <li class="nav-item">
-    <a class="btn mx-1 shadow-sm btn-icon {% if DARK_MODE %}border border-secondary{% else %}btn-light{% endif %} disabled" href="#">
+    <a class="btn mx-1 shadow-sm btn-icon border border-secondary disabled" href="#">
       <span class="material-icons-outlined">add</span>
     </a>
   </li>
   {% endif %}
 
   <li class="nav-item">
-    <a class="btn mx-1 shadow-sm btn-icon {% if DARK_MODE %}border border-secondary{% else %}btn-light{% endif %}" title="Balancete de Verificação"
+    <a class="btn mx-1 shadow-sm btn-icon border border-secondary" title="Balancete de Verificação"
       href="{% url 'core:trial-balance' pk=transaction.id %}">
       <span class="material-icons-outlined">event_note</span>
     </a>
@@ -56,28 +56,28 @@
 
   <li class="nav-item">
     {% if view.period.id == transaction.period_id %}
-    <a class="btn mx-1 shadow-sm btn-icon {% if DARK_MODE %}border border-secondary{% else %}btn-light{% endif %}" title="Editar Transação"
+    <a class="btn mx-1 shadow-sm btn-icon border border-secondary" title="Editar Transação"
       href="{% url 'core:transaction-update' pk=transaction.id %}">
       <span class="material-icons-outlined">settings</span>
     </a>
     {% else %}
-    <a class="btn mx-1 shadow-sm btn-icon {% if DARK_MODE %}border border-secondary{% else %}btn-light{% endif %} disabled" href="#">
+    <a class="btn mx-1 shadow-sm btn-icon border border-secondary disabled" href="#">
       <span class="material-icons-outlined">settings</span>
     </a>
     {% endif %}
   </li>
   <li class="nav-item">
     {% if transaction.next %}
-    <a class="btn mx-1 shadow-sm btn-icon {% if DARK_MODE %}border border-secondary{% else %}btn-light{% endif %}" title="Transação Subsequente"
-    href="{% url 'core:transaction-detail' pk=transaction.next_id %}">
-    <span class="material-icons-outlined">navigate_next</span>
-  </a>
-  {% else %}
-  <a class="btn mx-1 shadow-sm btn-icon {% if DARK_MODE %}border border-secondary{% else %}btn-light{% endif %} disabled" title="Transação Subsequente" href="#">
-    <span class="material-icons-outlined">navigate_next</span>
-  </a>
-  {% endif %}
-</li>
+    <a class="btn mx-1 shadow-sm btn-icon border border-secondary" title="Transação Subsequente"
+      href="{% url 'core:transaction-detail' pk=transaction.next_id %}">
+      <span class="material-icons-outlined">navigate_next</span>
+    </a>
+    {% else %}
+    <a class="btn mx-1 shadow-sm btn-icon border border-secondary disabled" title="Transação Subsequente" href="#">
+      <span class="material-icons-outlined">navigate_next</span>
+    </a>
+    {% endif %}
+  </li>
 
 </ul>
 

@@ -6,11 +6,11 @@
   data-bs-target="#delete-operation-{{operation.id}}">
   <span class="material-icons-outlined">delete</span>
 </a>
-<div class="modal fade {% if DARK_MODE %}bg-dark bg-opacity-25{% endif %}" id="delete-operation-{{operation.id}}"
-  tabindex="-1" aria-labelledby="remove-operation-{{operation.id}}-label" aria-hidden="true">
+<div class="modal fade bg-dark bg-opacity-25" id="delete-operation-{{operation.id}}" tabindex="-1"
+  aria-labelledby="remove-operation-{{operation.id}}-label" aria-hidden="true">
   <div class="modal-dialog">
-    <div class="modal-content {% if DARK_MODE %}bg-dark bg-opacity-80 border-secondary{% endif %}">
-      <div class="modal-header {% if DARK_MODE %}border-secondary{% else %}{% endif %}">
+    <div class="modal-content bg-dark bg-opacity-80 border-secondary">
+      <div class="modal-header border-secondary">
         <h5 class="modal-title" id="remove-operation-{{operation.id}}-label">
           Confirmação de exclusão
         </h5>
@@ -24,12 +24,12 @@
         <p class="m-1"><strong>Crédito</strong>: {{operation.credit|to_current_currency:app_settings|intcomma}}</p>
         <p class="m-1"><strong>Tipo de Operação</strong>: {{operation.get_type_display}}</p>
         <p class="m-1"><strong>Saldo</strong>: {{operation.account_balance|to_current_currency:app_settings|intcomma}}
-          <span class="badge {% if DARK_MODE %}bg-secondary{% else %}bg-primary{% endif %}">
+          <span class="badge bg-secondary">
             {{app_settings.current_currency.label}}
           </span>
         </p>
       </div>
-      <div class="modal-footer {% if DARK_MODE %}modal-footer border-secondary{% endif %}">
+      <div class="modal-footer modal-footer border-secondary">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
         <form action="{% url 'core:operation-delete' pk=operation.id %}" method="post">
           {% csrf_token %}

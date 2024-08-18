@@ -7,51 +7,51 @@
   <p>De <strong>{{period.start_date}}</strong> até <strong>{{period.end_date}}</strong></p>
 </header>
 
-<section class="shadow p-4 mx-auto text-center {% if DARK_MODE %}bg-secondary bg-opacity-25 rounded{% endif %}">
+<section class="shadow p-4 mx-auto text-center bg-secondary bg-opacity-25 rounded">
 
   {% if period.is_period_closeable %}
 
-    {% if period.status == period.Status.IN_PROGRESS %}
+  {% if period.status == period.Status.IN_PROGRESS %}
 
-    {% include "./period_in_progress.html" %}
+  {% include "./period_in_progress.html" %}
 
-    {% elif period.status == period.Status.CLOSING_ACCOUNTS %}
+  {% elif period.status == period.Status.CLOSING_ACCOUNTS %}
 
-      {% include "./period_closing_accounts.html" %}
+  {% include "./period_closing_accounts.html" %}
 
-    {% endif %}
+  {% endif %}
 
-    {% else %}
+  {% else %}
 
-      {% if period.days_to_close_period < 1 %}
-      <p class="text-center lead p-4">
-        O período contábil atual se encerra hoje.
-      </p>
-      {% elif period.days_to_close_period < 2 %}
-        Falta <span class="fs-2 fw-bold mx-1 {% if DARK_MODE %}text-info{% endif %}">1</span> dia até o encerramento do período contábil atual.
+  {% if period.days_to_close_period < 1 %} <p class="text-center lead p-4">
+    O período contábil atual se encerra hoje.
+    </p>
+    {% elif period.days_to_close_period < 2 %} Falta <span class="fs-2 fw-bold mx-1 text-info">1</span> dia até o
+      encerramento do período contábil atual.
       {% else %}
       <p class="text-center lead p-4">
-        Faltam <span class="fs-2 fw-bold mx-1 {% if DARK_MODE %}text-info{% endif %}">{{period.days_to_close_period}}</span> dias até o encerramento do período contábil atual.
+        Faltam <span class="fs-2 fw-bold mx-1 text-info">{{period.days_to_close_period}}</span> dias até o encerramento
+        do período contábil atual.
       </p>
       {% endif %}
 
 
-  {% endif %}
+      {% endif %}
 
 </section>
 
 {% if previous_periods.count > 0 %}
 <h2 class="text-center mt-4 mb-3">Períodos Contábeis Anteriores</h2>
-<section class="text-center {% if DARK_MODE %}p-2 bg-secondary bg-opacity-25 rounded{% endif %}">
+<section class="text-center p-2 bg-secondary bg-opacity-25 rounded">
   {% for previous in previous_periods %}
-  <div class="d-flex justify-content-between align-items-center border-bottom {% if DARK_MODE %}border-dark{% endif %}">
+  <div class="d-flex justify-content-between align-items-center border-bottom border-dark">
     <p>
       <strong>De</strong> {{previous.start_date}} <br>
       <strong>até</strong> {{previous.end_date}}
     </p>
-    
-    <a href="{% url 'core:transaction-list' period_id=previous.id %}" title="Verifica lista de transações para este período"
-      class="btn btn-light btn-icon shadow-sm  border-0 mx-1">
+
+    <a href="{% url 'core:transaction-list' period_id=previous.id %}"
+      title="Verifica lista de transações para este período" class="btn btn-light btn-icon shadow-sm  border-0 mx-1">
       <span class="material-icons-outlined">list</span>
     </a>
   </div>

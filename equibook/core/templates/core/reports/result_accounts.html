@@ -8,23 +8,11 @@
 
 <section class="row">
 
-  <article 
-  {% if DARK_MODE %}
-  class="col-md-5 offset-md-1 col-sm-12 px-0 bg-secondary bg-opacity-25 rounded"
-  {% else %}
-  class="col-md-5 offset-md-1 col-sm-12 px-0 shadow rounded"
-  {% endif %}
-  >    
+  <article class="col-md-5 offset-md-1 col-sm-12 px-0 bg-secondary bg-opacity-25 rounded">
     {% include "core/snippets/account_resume.html" with account=expense ul_size=55 %}
   </article>
 
-  <article 
-  {% if DARK_MODE %}
-  class="col-md-5 col-sm-12 mx-md-4 px-0 bg-secondary bg-opacity-25 rounded"
-  {% else %}
-  class="col-md-5 col-sm-12 mx-md-4 px-0 shadow rounded"
-  {% endif %}
-  >
+  <article class="col-md-5 col-sm-12 mx-md-4 px-0 bg-secondary bg-opacity-25 rounded">
     {% include "core/snippets/account_resume.html" with account=revenue ul_size=55 %}
   </article>
 
