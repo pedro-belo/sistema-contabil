@@ -1,30 +1,30 @@
 {% if not transaction.next and view.period.id == transaction.period_id %}
 <li class="nav-item">
-    <a class="btn mx-1 shadow-sm btn-icon {% if DARK_MODE %}border border-secondary{% else %}btn-light{% endif %}" title="Remover Transação" href="#" data-bs-toggle="modal"
-      data-bs-target="#delete-transaction-{{transaction.id}}">
-      <span class="material-icons-outlined">delete</span>
-    </a>
-    <div class="modal fade {% if DARK_MODE %}bg-dark bg-opacity-25{% endif %}" id="delete-transaction-{{transaction.id}}" tabindex="-1"
-      aria-labelledby="remove-transaction-{{transaction.id}}-label" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content {% if DARK_MODE %}bg-dark bg-opacity-80 border-secondary{% endif %}">
-          <div class="modal-header {% if DARK_MODE %}border-secondary{% else %}{% endif %}">
-            <h5 class="modal-title" id="remove-transaction-{{transaction.id}}-label">Confirmação de exclusão
-            </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body text-start">
-            <p class="m-1">Tem certeze que deseja remover esta a transação ?</p>
-          </div>
-          <div class="modal-footer {% if DARK_MODE %}modal-footer border-secondary{% endif %}">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
-            <form action="{% url 'core:transaction-delete' pk=transaction.id %}" method="post">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-danger">Sim</button>
-            </form>
-          </div>
+  <a class="btn mx-1 shadow-sm btn-icon border border-secondary" title="Remover Transação" href="#"
+    data-bs-toggle="modal" data-bs-target="#delete-transaction-{{transaction.id}}">
+    <span class="material-icons-outlined">delete</span>
+  </a>
+  <div class="modal fade bg-dark bg-opacity-25" id="delete-transaction-{{transaction.id}}" tabindex="-1"
+    aria-labelledby="remove-transaction-{{transaction.id}}-label" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark bg-opacity-80 border-secondary">
+        <div class="modal-header border-secondary">
+          <h5 class="modal-title" id="remove-transaction-{{transaction.id}}-label">Confirmação de exclusão
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-start">
+          <p class="m-1">Tem certeze que deseja remover esta a transação ?</p>
+        </div>
+        <div class="modal-footer modal-footer border-secondary">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+          <form action="{% url 'core:transaction-delete' pk=transaction.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Sim</button>
+          </form>
         </div>
       </div>
     </div>
-  </li>
-  {% endif %}
+  </div>
+</li>
+{% endif %}

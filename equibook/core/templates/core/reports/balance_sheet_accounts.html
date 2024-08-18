@@ -12,34 +12,16 @@
 
 <section class="row">
 
-  <article
-    {% if DARK_MODE %}
-      class="col-md-5 offset-md-1 col-sm-12 px-0 bg-secondary bg-opacity-25 rounded mb-3"
-    {% else %}
-      class="col-md-5 offset-md-1 col-sm-12 px-0 shadow rounded mb-3"
-    {% endif %}
-  >
+  <article class="col-md-5 offset-md-1 col-sm-12 px-0 bg-secondary bg-opacity-25 rounded mb-3">
     {% include "core/snippets/account_resume.html" with account=asset ul_size=60 %}
   </article>
 
   <article class="col-md-5 col-sm-12 mx-md-4">
     <div class="row">
-      <article 
-      {% if DARK_MODE %}
-      class="col-12 px-0 bg-secondary bg-opacity-25 rounded mb-3"
-      {% else %}
-      class="col-12 px-0 shadow rounded mb-3"
-      {% endif %}
-      >
+      <article class="col-12 px-0 bg-secondary bg-opacity-25 rounded mb-3">
         {% include "core/snippets/account_resume.html" with account=liability ul_size=25 %}
       </article>
-      <article 
-      {% if DARK_MODE %}
-      class="col-12 px-0 bg-secondary bg-opacity-25 rounded"
-      {% else %}
-      class="col-12 px-0 shadow rounded"
-      {% endif %}
-      >
+      <article class="col-12 px-0 bg-secondary bg-opacity-25 rounded">
         {% include "core/snippets/account_resume.html" with account=equity ul_size=25 %}
       </article>
     </div>

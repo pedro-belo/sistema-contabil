@@ -5,7 +5,7 @@
 {% block h1_content %}Criação de Desdobramento{% endblock %}
 
 {% block p_content %}
-<a class="{% if DARK_MODE %}text-white{% else %}text-dark{% endif %}" href="{% url 'core:account-detail' pk=parent.id %}">{{parent.name}}</a>
+<a class="text-white" href="{% url 'core:account-detail' pk=parent.id %}">{{parent.name}}</a>
 {% endblock %}
 
 {% block name_help %}

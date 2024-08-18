@@ -39,28 +39,22 @@
 
 <div class="row">
 
-  <div 
-    class="col-sm-5 col-md-4 align-self-start {% if DARK_MODE %}bg-secondary bg-opacity-25 px-0 rounded text-white{% else %}shadow px-0 rounded{% endif %}"
+  <div class="col-sm-5 col-md-4 align-self-start bg-secondary bg-opacity-25 px-0 rounded text-white"
     style="min-height: 60vh;overflow-x: scroll">
-    
-    <p class="fs-5 fw-bold text-center p-2 text-white rounded-top {% if DARK_MODE %}bg-secondary bg-opacity-50 {% else %}bg-primary{% endif %}">
+
+    <p class="fs-5 fw-bold text-center p-2 text-white rounded-top bg-secondary bg-opacity-50">
       Desdobramentos
     </p>
-    
+
     <ul class="nav justify-content-center flex-column">
       {% for parent in account.account_set.all %}
       <li class="nav-item my-1">
-        <a 
-        {% if DARK_MODE %}
-        class="nav-link d-flex justify-content-between text-white" 
-        {% else %}
-        class="nav-link d-flex justify-content-between text-dark" 
-        {% endif %}
-        href="{% url 'core:account-detail' pk=parent.pk %}">
-          {{parent.name}} 
-          <small class="badge {% if DARK_MODE %}bg-dark{% else %}bg-primary{% endif %}">
-          {{parent.total_account_balance|to_current_currency:app_settings|intcomma}}
-        </small>
+        <a class="nav-link d-flex justify-content-between text-white"
+          href="{% url 'core:account-detail' pk=parent.pk %}">
+          {{parent.name}}
+          <small class="badge bg-dark">
+            {{parent.total_account_balance|to_current_currency:app_settings|intcomma}}
+          </small>
         </a>
       </li>
       {% empty %}
@@ -72,35 +66,38 @@
   </div>
 
   <div class="col">
-    <div class="rounded {% if DARK_MODE %}bg-secondary bg-opacity-25{% else %}shadow{% endif %}" style="height: 60vh;overflow-x: scroll">
-      <table class="table {% if DARK_MODE %}table-dark{% endif %}">
+    <div class="rounded bg-secondary bg-opacity-25" style="height: 60vh;overflow-x: scroll">
+      <table class="table table-dark">
         <thead>
-          <tr class="fs-5 fw-bold p-2 {% if DARK_MODE %} bg-secondary bg-opacity-50 {% else %} fs-5 fw-bold bg-primary {% endif %}">
+          <tr class="fs-5 fw-bold p-2 bg-secondary bg-opacity-50">
             <th class="bg-transparent text-white" colspan="1">Lista de Transações</th>
             <th class="bg-transparent text-white" colspan="2">D|C</th>
           </tr>
         </thead>
-  
+
         <tbody>
           {% for transaction in transactions %}
-          
+
           <tr>
-            <td {% if DARK_MODE %} class="bg-transparent border-dark text-white" {% endif %}>
+            <td class="bg-transparent border-dark text-white">
               {{transaction.title}}
             </td>
-            <td {% if DARK_MODE %} class="bg-transparent border-dark text-white" {% endif %}>
-              {{transaction.debit_sum|to_current_currency:app_settings|intcomma}} / {{transaction.credit_sum|to_current_currency:app_settings|intcomma}}
+            <td class="bg-transparent border-dark text-white">
+              {{transaction.debit_sum|to_current_currency:app_settings|intcomma}} /
+              {{transaction.credit_sum|to_current_currency:app_settings|intcomma}}
             </td>
-            <td {% if DARK_MODE %} class="text-end bg-transparent border-dark text-white"  {% else %} class="text-end"{% endif %}>           
+            <td class="text-end bg-transparent border-dark text-white">
               <a class="btn btn-sm btn-icon" title="Balanço" href="{% url 'core:trial-balance' pk=transaction.id %}">
                 <span title="Balanço" class="material-icons-outlined">event_note</span>
               </a>
-              <a class="btn btn-sm btn-icon" title="Detalhes" href="{% url 'core:transaction-detail' pk=transaction.id %}">
+              <a class="btn btn-sm btn-icon" title="Detalhes"
+                href="{% url 'core:transaction-detail' pk=transaction.id %}">
                 <span class="material-icons-outlined">
                   file_open
                 </span>
               </a>
-              <a class="btn btn-sm btn-icon" title="Editar" href="{% url 'core:transaction-update' pk=transaction.id %}">
+              <a class="btn btn-sm btn-icon" title="Editar"
+                href="{% url 'core:transaction-update' pk=transaction.id %}">
                 <span class="material-icons-outlined">
                   edit
                 </span>
@@ -109,7 +106,7 @@
           </tr>
           {% empty %}
           <tr>
-            <td {% if DARK_MODE %} class="text-center bg-transparent border-dark text-white" {% else %} class="text-center" {% endif %} colspan="2">
+            <td class="text-center bg-transparent border-dark text-white" colspan="2">
               Nenhuma transação foi realizada para esta conta.
             </td>
           </tr>

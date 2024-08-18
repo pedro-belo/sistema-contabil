@@ -5,7 +5,7 @@
 {% block h1_content %}Edição de Conta{% endblock %}
 
 {% block p_content %}
-    <a class="{% if DARK_MODE %}text-white{% else %}text-dark{% endif %}" href="{% url 'core:account-detail' pk=object.id %}">{{object.name}}</a>
+    <a class="text-white" href="{% url 'core:account-detail' pk=object.id %}">{{object.name}}</a>
 {% endblock %}
 
 {% block btn_delete %}

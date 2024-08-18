@@ -26,21 +26,23 @@
 
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Continuar</button>
 
-<div class="modal fade {% if DARK_MODE %}bg-dark bg-opacity-25 text-white{% endif %}" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade bg-dark bg-opacity-25 text-white" id="exampleModal" tabindex="-1"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content {% if DARK_MODE %}bg-dark bg-opacity-80 border-secondary{% endif %}">
-            <div class="modal-header {% if DARK_MODE %}border-secondary{% else %}{% endif %}">
+        <div class="modal-content bg-dark bg-opacity-80 border-secondary">
+            <div class="modal-header border-secondary">
                 <h5 class="modal-title" id="exampleModalLabel">Confirmação</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body text-start">
-                <p>Ao continuar para criar um novo período contábil, seus registros atuais ainda estarão disponíveis para
+                <p>Ao continuar para criar um novo período contábil, seus registros atuais ainda estarão disponíveis
+                    para
                     edição até que todos os ajustes necessários sejam realizados. Certifique-se de concluir todas as
                     correções e reconciliações antes de prosseguir para garantir a precisão e integridade dos registros
                     financeiros.</p>
-                    <p>Deseja realmente continuar ?</p>
+                <p>Deseja realmente continuar ?</p>
             </div>
-            <div class="modal-footer {% if DARK_MODE %}modal-footer border-secondary{% endif %}">
+            <div class="modal-footer modal-footer border-secondary">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
                 <form action="{% url 'core:accounting-period-detail' %}" method="post">
                     {% csrf_token %}

@@ -1,10 +1,10 @@
-<div class="card text-center my-4 border-0 {% if DARK_MODE %}bg-secondary bg-opacity-50{% else %}shadow{% endif %}">
-  <div class="card-header py-2 fs-5 fw-bold {% if DARK_MODE %}text-white{% else %}bg-dark{% endif %}">
+<div class="card text-center my-4 border-0 bg-secondary bg-opacity-50">
+  <div class="card-header py-2 fs-5 fw-bold text-white">
     {{transaction.id}}: {{transaction.title}}
   </div>
   <div class="card-body p-0">
   </div>
-  <div class="card-footer border-0 bg-light bg-opacity-50 {% if DARK_MODE %}bg-dark{% endif %}">
+  <div class="card-footer border-0 bg-light bg-opacity-50 bg-dark">
     <a class="btn btn-light btn-icon shadow-sm" title="Balancete de Verificação"
       href="{% url 'core:trial-balance' pk=transaction.id %}">
       <span class="material-icons-outlined">event_note</span>
@@ -21,13 +21,13 @@
     </a>
     {% else %}
     <a class="btn btn-light btn-icon shadow-sm disabled" title="Mover para baixo" href="#">
-      <span class="material-icons-outlined {% if DARK_MODE %}text-dark{% endif %}">move_down</span>
+      <span class="material-icons-outlined text-dark">move_down</span>
     </a>
     {% endif %}
 
     {% if not transaction.has_next %}
     <a class="btn btn-light btn-icon shadow-sm disabled" title="Mover para cima" href="#">
-      <span class="material-icons-outlined {% if DARK_MODE %}text-dark{% endif %}">move_up</span>
+      <span class="material-icons-outlined text-dark">move_up</span>
     </a>
 
     {% include "./remove_transaction.html" with transaction=transaction %}
