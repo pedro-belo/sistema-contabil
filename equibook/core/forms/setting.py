@@ -4,18 +4,10 @@ from shared import forms as base
 
 
 class SettingForm(base.FormCustom, forms.ModelForm):
-    light = {
-        "entity": {"class": base.entry_light},
-        "current_currency": {"class": base.select_light},
-        "theme": {"class": base.select_light},
-        "exchange_rate": {"class": base.entry_light},
-    }
-
-    dark = {
-        "entity": {"class": base.entry_dark},
-        "current_currency": {"class": base.select_dark},
-        "theme": {"class": base.select_dark},
-        "exchange_rate": {"class": base.entry_dark},
+    widget_attrs = {
+        "entity": {"class": base.form_input_text},
+        "current_currency": {"class": base.form_select},
+        "exchange_rate": {"class": base.form_input_text},
     }
 
     def clean(self):
@@ -34,4 +26,4 @@ class SettingForm(base.FormCustom, forms.ModelForm):
 
     class Meta:
         model = facade.Setting
-        fields = "entity", "current_currency", "exchange_rate", "theme"
+        fields = ("entity", "current_currency", "exchange_rate")

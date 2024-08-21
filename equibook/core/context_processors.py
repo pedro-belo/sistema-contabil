@@ -11,4 +11,4 @@ def app_settings(request):
 
     app_settings = settings.get_app_settings(request.user, to_dict=True)
 
-    return {"app_settings": app_settings, "DARK_MODE": app_settings["DARK_MODE"]}
+    return {"app_settings": app_settings}

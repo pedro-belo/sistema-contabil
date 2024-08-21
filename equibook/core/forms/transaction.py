@@ -5,23 +5,14 @@ from shared import forms as base
 
 
 class TransactionForm(base.FormCustom, forms.ModelForm):
-    light = {
-        "title": {"class": base.entry_light},
-        "description": {"class": base.entry_light},
-    }
-
-    dark = {
-        "title": {"class": base.entry_dark},
-        "description": {"class": base.entry_dark},
+    widget_attrs = {
+        "title": {"class": base.form_input_text},
+        "description": {"class": base.form_input_text},
     }
 
     def __init__(self, *args, account_period, **kwargs):
         if "instance" in kwargs:
-            self.light["archived"] = {
-                "class": "form-check-input",
-                "role": "switch",
-            }
-            self.dark["archived"] = {
+            self.widget_attrs["archived"] = {
                 "class": "form-check-input",
                 "role": "switch",
             }

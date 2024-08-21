@@ -11,7 +11,6 @@ class SettingUpdateViewTestCase(base.TestCase):
             "entity": f"{setting.entity} updated",
             "current_currency": facade.Currency.JPY,
             "exchange_rate": 1,
-            "theme": facade.Setting.Theme.DARK,
         }
 
     def test_get_authenticated(self):
@@ -29,7 +28,6 @@ class SettingUpdateViewTestCase(base.TestCase):
         self.assertEqual(setting.entity, "Entity Name")
         self.assertEqual(setting.base_currency, facade.Currency.BRL)
         self.assertEqual(setting.current_currency, facade.Currency.BRL)
-        self.assertEqual(setting.theme, facade.Setting.Theme.LIGHT)
         self.assertEqual(setting.exchange_rate, 0)
 
     def test_update_authenticated(self):
@@ -47,7 +45,6 @@ class SettingUpdateViewTestCase(base.TestCase):
         self.assertEqual(setting.entity, self.form_data["entity"])
         self.assertEqual(setting.base_currency, facade.Currency.BRL)
         self.assertEqual(setting.current_currency, self.form_data["current_currency"])
-        self.assertEqual(setting.theme, self.form_data["theme"])
         self.assertEqual(
             setting.exchange_rate,
             base.Decimal(self.form_data["exchange_rate"]),

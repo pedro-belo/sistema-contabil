@@ -4,18 +4,11 @@ from shared import forms as base
 
 
 class OperationForm(base.FormCustom, forms.ModelForm):
-    light = {
-        "account": {"class": base.select_light},
-        "type": {"class": base.select_light},
-        "value": {"class": base.entry_light},
-        "date": {"class": base.entry_light},
-    }
-
-    dark = {
-        "account": {"class": base.select_dark},
-        "type": {"class": base.select_dark},
-        "value": {"class": base.entry_dark},
-        "date": {"class": base.entry_dark},
+    widget_attrs = {
+        "account": {"class": base.form_select},
+        "type": {"class": base.form_select},
+        "value": {"class": base.form_input_text},
+        "date": {"class": base.form_input_text},
     }
 
     def clean_value(self):
@@ -63,14 +56,9 @@ class OperationForm(base.FormCustom, forms.ModelForm):
 
 
 class OperationMetaForm(base.FormCustom, forms.ModelForm):
-    light = {
-        "description": {"class": base.entry_light},
-        "document": {"class": base.entry_light},
-    }
-
-    dark = {
-        "description": {"class": base.entry_dark},
-        "document": {"class": base.entry_dark},
+    widget_attrs = {
+        "description": {"class": base.form_input_text},
+        "document": {"class": base.form_input_text},
     }
 
     class Meta:
