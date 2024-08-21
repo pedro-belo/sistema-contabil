@@ -1,4 +1,3 @@
-import datetime
 from datetime import date
 from django.db import models
 from django.contrib.auth import get_user_model
@@ -22,10 +21,6 @@ class Currency(models.IntegerChoices):
 
 
 class Setting(models.Model):
-    class Theme(models.IntegerChoices):
-        LIGHT = 1, "Claro"
-        DARK = 2, "Escuro"
-        AUTO = 3, "Automático"
 
     user = models.OneToOneField(
         "users.User",
@@ -46,12 +41,6 @@ class Setting(models.Model):
         verbose_name="Moeda base",
     )
 
-    theme = models.PositiveSmallIntegerField(
-        choices=Theme.choices,
-        default=Theme.LIGHT,
-        verbose_name="Tema",
-    )
-
     current_currency = models.PositiveSmallIntegerField(
         choices=Currency.choices,
         default=Currency.BRL,
@@ -68,15 +57,6 @@ class Setting(models.Model):
 
     defined_first_period = models.BooleanField()
 
-    def is_default_theme(self):
-        if self.theme == self.Theme.AUTO:
-            current_time = datetime.datetime.now().time()
-            start_time = datetime.time(7, 0, 0)
-            end_time = datetime.time(17, 30, 0)
-            return start_time <= current_time <= end_time
-
-        return self.theme == self.Theme.LIGHT
-
     def to_dict(self):
         return {
             "entity": self.entity,
@@ -90,10 +70,6 @@ class Setting(models.Model):
             },
             "exchange_rate": float(self.exchange_rate),
             "defined_first_period": self.defined_first_period,
-            "theme": {
-                "code": self.theme,
-                "label": self.get_theme_display(),
-            }
         }
 
     def __str__(self) -> str:
