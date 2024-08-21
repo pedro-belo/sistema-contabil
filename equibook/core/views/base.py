@@ -32,18 +32,6 @@ from django.db.transaction import atomic  # NOQA
 from django.urls import path  # NOQA
 
 
-class FormMixin:
-    use_form_dark_mode = True
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-
-        if self.use_form_dark_mode:
-            kwargs["dark_mode"] = self.app_settings["DARK_MODE"]
-
-        return kwargs
-
-
 def get_user_accounting_period(user):
     return facade.AccountingPeriod.objects.filter(user=user).get(
         status__in=[
@@ -67,36 +55,28 @@ class LoginRequiredMixin(DjLoginRequiredMixin):
         return super().dispatch(request, *args, **kwargs)
 
 
-class FormView(FormMixin, LoginRequiredMixin, generic.FormView):
-    ...
+class FormView(LoginRequiredMixin, generic.FormView): ...
 
 
-class DetailView(LoginRequiredMixin, generic.DetailView):
-    ...
+class DetailView(LoginRequiredMixin, generic.DetailView): ...
 
 
-class TemplateView(LoginRequiredMixin, generic.TemplateView):
-    ...
+class TemplateView(LoginRequiredMixin, generic.TemplateView): ...
 
 
-class ListView(LoginRequiredMixin, generic.ListView):
-    ...
+class ListView(LoginRequiredMixin, generic.ListView): ...
 
 
-class UpdateView(FormMixin, LoginRequiredMixin, generic.UpdateView):
-    ...
+class UpdateView(LoginRequiredMixin, generic.UpdateView): ...
 
 
-class CreateView(FormMixin, LoginRequiredMixin, generic.CreateView):
-    ...
+class CreateView(LoginRequiredMixin, generic.CreateView): ...
 
 
-class DeleteView(LoginRequiredMixin, generic.DeleteView):
-    ...
+class DeleteView(LoginRequiredMixin, generic.DeleteView): ...
 
 
-class View(LoginRequiredMixin, generic.View):
-    ...
+class View(LoginRequiredMixin, generic.View): ...
 
 
 def get_transaction(view, key="transaction_id"):
