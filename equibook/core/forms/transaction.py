@@ -1,7 +1,7 @@
 from typing import Any
 from django import forms
 from equibook.core import facade
-from . import base
+from shared import forms as base
 
 
 class TransactionForm(base.FormCustom, forms.ModelForm):
