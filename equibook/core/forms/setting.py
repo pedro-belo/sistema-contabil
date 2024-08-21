@@ -7,7 +7,6 @@ class SettingForm(base.FormCustom, forms.ModelForm):
     widget_attrs = {
         "entity": {"class": base.form_input_text},
         "current_currency": {"class": base.form_select},
-        "theme": {"class": base.form_select},
         "exchange_rate": {"class": base.form_input_text},
     }
 
@@ -27,4 +26,4 @@ class SettingForm(base.FormCustom, forms.ModelForm):
 
     class Meta:
         model = facade.Setting
-        fields = "entity", "current_currency", "exchange_rate", "theme"
+        fields = ("entity", "current_currency", "exchange_rate")

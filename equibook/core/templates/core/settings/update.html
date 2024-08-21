@@ -12,7 +12,7 @@
       {% include "snippets/non_field_errors.html" with form=form %}
 
       <div class="row my-3">
-        <div class="col-md-8">
+        <div class="col">
           <label for="{{form.entity.id_for_label}}" class="form-label">Nome </label>
           {{form.entity}}
           <p class="form-text">Informe o nome da entidade ao qual esta conta pertence. Ex: '<strong>Goiabas
@@ -20,12 +20,6 @@
           {% include "snippets/field_errors.html" with field=form.entity %}
         </div>
 
-        <div class="col-md-4">
-          <label for="{{form.theme.id_for_label}}" class="form-label">Tema </label>
-          {{form.theme}}
-          <p class="form-text">Modo de exibição</p>
-          {% include "snippets/field_errors.html" with field=form.theme %}
-        </div>
       </div>
 
 
