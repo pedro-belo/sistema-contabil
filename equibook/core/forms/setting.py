@@ -4,14 +4,7 @@ from shared import forms as base
 
 
 class SettingForm(base.FormCustom, forms.ModelForm):
-    light = {
-        "entity": {"class": base.entry_light},
-        "current_currency": {"class": base.select_light},
-        "theme": {"class": base.select_light},
-        "exchange_rate": {"class": base.entry_light},
-    }
-
-    dark = {
+    widget_attrs = {
         "entity": {"class": base.entry_dark},
         "current_currency": {"class": base.select_dark},
         "theme": {"class": base.select_dark},

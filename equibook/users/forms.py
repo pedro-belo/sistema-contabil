@@ -10,14 +10,14 @@ from shared import forms as base
 
 
 class AuthenticationForm(base.FormCustom, DjAuthenticationForm):
-    dark = {
+    widget_attrs = {
         "username": {"label": "Usuário", "class": "form-control"},
         "password": {"label": "Senha", "class": "form-control"},
     }
 
 
 class UserCreationForm(base.FormCustom, DjUserCreationForm):
-    dark = {
+    widget_attrs = {
         "username": {"label": "Usuário", "class": "form-control"},
         "password1": {"label": "Senha", "class": "form-control"},
         "password2": {"label": "Repetir Senha", "class": "form-control"},

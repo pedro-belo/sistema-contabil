@@ -4,14 +4,7 @@ from shared import forms as base
 
 
 class OperationForm(base.FormCustom, forms.ModelForm):
-    light = {
-        "account": {"class": base.select_light},
-        "type": {"class": base.select_light},
-        "value": {"class": base.entry_light},
-        "date": {"class": base.entry_light},
-    }
-
-    dark = {
+    widget_attrs = {
         "account": {"class": base.select_dark},
         "type": {"class": base.select_dark},
         "value": {"class": base.entry_dark},
@@ -63,12 +56,7 @@ class OperationForm(base.FormCustom, forms.ModelForm):
 
 
 class OperationMetaForm(base.FormCustom, forms.ModelForm):
-    light = {
-        "description": {"class": base.entry_light},
-        "document": {"class": base.entry_light},
-    }
-
-    dark = {
+    widget_attrs = {
         "description": {"class": base.entry_dark},
         "document": {"class": base.entry_dark},
     }

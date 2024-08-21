@@ -4,12 +4,7 @@ from shared import forms as base
 
 
 class AccountingPeriodCreateFirstForm(base.FormCustom, forms.ModelForm):
-    light = {
-        "start_date": {"class": base.entry_light},
-        "end_date": {"class": base.entry_light},
-    }
-
-    dark = {
+    widget_attrs = {
         "start_date": {"class": base.entry_dark},
         "end_date": {"class": base.entry_dark},
     }
@@ -39,14 +34,7 @@ class AccountingPeriodCreateFirstForm(base.FormCustom, forms.ModelForm):
 
 
 class AccountingPeriodCloseForm(base.FormCustom, forms.ModelForm):
-    light = {
-        "start_date": {"class": base.entry_light},
-        "end_date": {"class": base.entry_light},
-        "loss_account": {"class": base.select_light},
-        "earn_account": {"class": base.select_light},
-    }
-
-    dark = {
+    widget_attrs = {
         "start_date": {"class": base.entry_dark},
         "end_date": {"class": base.entry_dark},
         "loss_account": {"class": base.select_dark},

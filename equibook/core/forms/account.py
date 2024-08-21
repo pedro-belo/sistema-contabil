@@ -4,11 +4,7 @@ from shared import forms as base
 
 
 class AccountForm(base.FormCustom, forms.ModelForm):
-    light = {
-        "name": {"class": base.entry_light},
-    }
-
-    dark = {
+    widget_attrs = {
         "name": {"class": base.entry_dark},
     }
 
