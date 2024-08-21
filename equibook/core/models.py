@@ -93,8 +93,7 @@ class Setting(models.Model):
             "theme": {
                 "code": self.theme,
                 "label": self.get_theme_display(),
-            },
-            "DARK_MODE": not self.is_default_theme(),
+            }
         }
 
     def __str__(self) -> str:
