@@ -1,15 +1,9 @@
-entry_light = "form-control"
-entry_dark = "form-control bg-secondary bg-opacity-50 border-secondary text-white"
-
-select_light = "form-select"
-select_dark = "form-select bg-secondary bg-opacity-50 border-secondary text-white"
+form_input_text = "form-control bg-secondary bg-opacity-50 border-secondary text-white"
+form_select = "form-select bg-secondary bg-opacity-50 border-secondary text-white"
 
 
 class FormCustom:
     widget_attrs = dict()
-
-    dark = dict()
-    light = dict()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

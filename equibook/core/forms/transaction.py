@@ -6,8 +6,8 @@ from shared import forms as base
 
 class TransactionForm(base.FormCustom, forms.ModelForm):
     widget_attrs = {
-        "title": {"class": base.entry_dark},
-        "description": {"class": base.entry_dark},
+        "title": {"class": base.form_input_text},
+        "description": {"class": base.form_input_text},
     }
 
     def __init__(self, *args, account_period, **kwargs):

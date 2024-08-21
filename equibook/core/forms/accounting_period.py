@@ -5,8 +5,8 @@ from shared import forms as base
 
 class AccountingPeriodCreateFirstForm(base.FormCustom, forms.ModelForm):
     widget_attrs = {
-        "start_date": {"class": base.entry_dark},
-        "end_date": {"class": base.entry_dark},
+        "start_date": {"class": base.form_input_text},
+        "end_date": {"class": base.form_input_text},
     }
 
     def clean(self):
@@ -35,10 +35,10 @@ class AccountingPeriodCreateFirstForm(base.FormCustom, forms.ModelForm):
 
 class AccountingPeriodCloseForm(base.FormCustom, forms.ModelForm):
     widget_attrs = {
-        "start_date": {"class": base.entry_dark},
-        "end_date": {"class": base.entry_dark},
-        "loss_account": {"class": base.select_dark},
-        "earn_account": {"class": base.select_dark},
+        "start_date": {"class": base.form_input_text},
+        "end_date": {"class": base.form_input_text},
+        "loss_account": {"class": base.form_select},
+        "earn_account": {"class": base.form_select},
     }
 
     def __init__(

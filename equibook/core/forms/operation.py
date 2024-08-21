@@ -5,10 +5,10 @@ from shared import forms as base
 
 class OperationForm(base.FormCustom, forms.ModelForm):
     widget_attrs = {
-        "account": {"class": base.select_dark},
-        "type": {"class": base.select_dark},
-        "value": {"class": base.entry_dark},
-        "date": {"class": base.entry_dark},
+        "account": {"class": base.form_select},
+        "type": {"class": base.form_select},
+        "value": {"class": base.form_input_text},
+        "date": {"class": base.form_input_text},
     }
 
     def clean_value(self):
@@ -57,8 +57,8 @@ class OperationForm(base.FormCustom, forms.ModelForm):
 
 class OperationMetaForm(base.FormCustom, forms.ModelForm):
     widget_attrs = {
-        "description": {"class": base.entry_dark},
-        "document": {"class": base.entry_dark},
+        "description": {"class": base.form_input_text},
+        "document": {"class": base.form_input_text},
     }
 
     class Meta:

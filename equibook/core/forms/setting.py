@@ -5,10 +5,10 @@ from shared import forms as base
 
 class SettingForm(base.FormCustom, forms.ModelForm):
     widget_attrs = {
-        "entity": {"class": base.entry_dark},
-        "current_currency": {"class": base.select_dark},
-        "theme": {"class": base.select_dark},
-        "exchange_rate": {"class": base.entry_dark},
+        "entity": {"class": base.form_input_text},
+        "current_currency": {"class": base.form_select},
+        "theme": {"class": base.form_select},
+        "exchange_rate": {"class": base.form_input_text},
     }
 
     def clean(self):

@@ -5,7 +5,7 @@ from shared import forms as base
 
 class AccountForm(base.FormCustom, forms.ModelForm):
     widget_attrs = {
-        "name": {"class": base.entry_dark},
+        "name": {"class": base.form_input_text},
     }
 
     class Meta:
