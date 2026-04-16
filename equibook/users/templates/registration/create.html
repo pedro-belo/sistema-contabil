@@ -2,66 +2,72 @@
 
 {% load static %}
 
+{% block title %}Cadastro{% endblock %}
+
 {% block content %}
 
-<h1 class="text-center m-4">Cadastro</h1>
+<div class="min-vh-100 d-flex align-items-center justify-content-center py-5">
+  <div class="w-100" style="max-width: 540px;">
 
-<form class="mx-auto m-4" action="{% url 'users:register' %}" method="post" style="max-width: 520px;">
-
-    {% include "snippets/non_field_errors.html" with form=form %}
-    {% include "snippets/messages.html" %}
-
-    {% csrf_token %}
-
-    <div class="row">
-        <div class="col-sm-12 col-md-6 mb-2">
-            {% include "./form_field.html" with field=form.entity %}
-        </div>
-
-        <div class="col-sm-12 col-md-6 mb-2">
-            {% include "./form_field.html" with field=form.username %}
-        </div>
-
+    <div class="text-center mb-4">
+      <span class="material-icons-outlined text-primary mb-2" style="font-size: 2.5rem;">auto_stories</span>
+      <h1 class="fw-bold fs-3 mb-1">EquiBook</h1>
+      <p class="text-secondary small mb-0">Crie sua conta para começar</p>
     </div>
 
-    <div class="mb-2">
-        {% include "./form_field.html" with field=form.email %}
-    </div>
+    <div class="card border-secondary-subtle rounded-4 shadow">
+      <div class="card-body p-4">
 
-    <div class="row">
+        <form action="{% url 'users:register' %}" method="post">
+          {% csrf_token %}
 
-        <div class="col-sm-12 col-md-6 mb-2">
-            {% include "./form_field.html" with field=form.password1 %}
-        </div>
+          {% include "snippets/non_field_errors.html" with form=form %}
+          {% include "snippets/messages.html" %}
 
-        <div class="col-sm-12 col-md-6 mb-2">
-            {% include "./form_field.html" with field=form.password2 %}
-        </div>
-
-    </div>
-
-    <div class="mb-2">
-        {% include "./form_field.html" with field=form.base_currency %}
-    </div>
-
-    <div class="p-2 text-center">
-        <button class="btn btn-primary" type="submit">
-            <div class="d-flex">
-                <span class="material-icons-outlined">person_add</span>
-                <span>Cadastrar</span>
+          <div class="row">
+            <div class="col-sm-12 col-md-6 mb-3">
+              {% include "./form_field.html" with field=form.entity %}
             </div>
-        </button>
+            <div class="col-sm-12 col-md-6 mb-3">
+              {% include "./form_field.html" with field=form.username %}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            {% include "./form_field.html" with field=form.email %}
+          </div>
+
+          <div class="row">
+            <div class="col-sm-12 col-md-6 mb-3">
+              {% include "./form_field.html" with field=form.password1 %}
+            </div>
+            <div class="col-sm-12 col-md-6 mb-3">
+              {% include "./form_field.html" with field=form.password2 %}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            {% include "./form_field.html" with field=form.base_currency %}
+          </div>
+
+          <div class="d-grid mt-4">
+            <button class="btn btn-primary btn-lg" type="submit">
+              <span class="material-icons-outlined align-middle me-1" style="font-size: 1.2rem;">person_add</span>
+              Cadastrar
+            </button>
+          </div>
+
+        </form>
+
+      </div>
     </div>
 
-    <hr class="mt-2">
-
-    <p class="text-center">
-        Já é cadastrado ?
-        <a class="fw-bold text-decoration-none text-center" href="{% url 'users:login' %}">
-            Fazer Login
-        </a>
+    <p class="text-center text-secondary small mt-3 mb-0">
+      Já é cadastrado?
+      <a class="fw-semibold text-decoration-none" href="{% url 'users:login' %}">Fazer login</a>
     </p>
 
-</form>
+  </div>
+</div>
 
 {% endblock %}
