@@ -1,43 +1,20 @@
-<div class="card text-center my-4 border-0 bg-secondary bg-opacity-50">
-  <div class="card-header py-2 fs-5 fw-bold text-white">
-    {{transaction.id}}: {{transaction.title}}
-  </div>
-  <div class="card-body p-0">
-  </div>
-  <div class="card-footer border-0 bg-light bg-opacity-50 bg-dark">
-    <a class="btn btn-light btn-icon shadow-sm" title="Balancete de Verificação"
-      href="{% url 'core:trial-balance' pk=transaction.id %}">
-      <span class="material-icons-outlined">event_note</span>
-    </a>
-    <a class="btn btn-light btn-icon shadow-sm" title="Detalhes Sobre a Transação"
-      href="{% url 'core:transaction-detail' pk=transaction.id %}">
-      <span class="material-icons-outlined">file_open</span>
-    </a>
-
-    {% if transaction.has_previous %}
-    <a class="btn btn-light btn-icon shadow-sm" title="Mover para baixo"
-      href="{% url 'core:transaction-move-down' pk=transaction.id %}#{{transaction.id}}">
-      <span class="material-icons-outlined">move_down</span>
-    </a>
-    {% else %}
-    <a class="btn btn-light btn-icon shadow-sm disabled" title="Mover para baixo" href="#">
-      <span class="material-icons-outlined text-dark">move_down</span>
-    </a>
-    {% endif %}
-
-    {% if not transaction.has_next %}
-    <a class="btn btn-light btn-icon shadow-sm disabled" title="Mover para cima" href="#">
-      <span class="material-icons-outlined text-dark">move_up</span>
-    </a>
-
-    {% include "./remove_transaction.html" with transaction=transaction %}
-
-    {% else %}
-    <a class="btn btn-light btn-icon shadow-sm" title="Mover para cima"
-      href="{% url 'core:transaction-move-up' pk=transaction.id %}#{{transaction.id}}">
-      <span class="material-icons-outlined">move_up</span>
-    </a>
-    {% endif %}
-
+<div class="card my-3 border border-secondary-subtle rounded-3 shadow-sm overflow-hidden opacity-75">
+  <div class="card-header py-2 px-3 d-flex justify-content-between align-items-center border-bottom border-secondary-subtle bg-secondary bg-opacity-50">
+    <div class="d-flex align-items-center gap-2">
+      <span class="fw-semibold text-white small">
+        <span class="text-secondary me-1">#{{transaction.id}}</span>{{transaction.title}}
+      </span>
+      <span class="badge bg-secondary bg-opacity-50 text-white small">Arquivada</span>
+    </div>
+    <div class="d-flex gap-1">
+      <a class="btn btn-sm border-0 text-secondary" title="Balancete"
+        href="{% url 'core:trial-balance' pk=transaction.id %}">
+        <span class="material-icons-outlined" style="font-size:1rem;">event_note</span>
+      </a>
+      <a class="btn btn-sm border-0 text-secondary" title="Detalhes"
+        href="{% url 'core:transaction-detail' pk=transaction.id %}">
+        <span class="material-icons-outlined" style="font-size:1rem;">file_open</span>
+      </a>
+    </div>
   </div>
 </div>

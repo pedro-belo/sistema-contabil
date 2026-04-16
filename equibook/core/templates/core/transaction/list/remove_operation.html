@@ -2,9 +2,9 @@
 
 {% load to_current_currency %}
 
-<a class="btn btn-light btn-icon shadow-sm" title="Remover" href="#" data-bs-toggle="modal"
+<a class="btn btn-sm border-0 text-danger" title="Remover" href="#" data-bs-toggle="modal"
   data-bs-target="#delete-operation-{{operation.id}}">
-  <span class="material-icons-outlined">delete</span>
+  <span class="material-icons-outlined" style="font-size:1rem;">delete</span>
 </a>
 <div class="modal fade bg-dark bg-opacity-25" id="delete-operation-{{operation.id}}" tabindex="-1"
   aria-labelledby="remove-operation-{{operation.id}}-label" aria-hidden="true">

@@ -8,57 +8,64 @@
 
 {% block content %}
 
-<h1 class="p-4 text-center">Transações Arquivadas</h1>
+<div class="mb-4">
+  <h1 class="fw-bold fs-4 mb-1">Transações Arquivadas</h1>
+  <p class="text-secondary small mb-0">Lançamentos arquivados do período atual</p>
+</div>
 
 <div class="row">
   {% include "core/snippets/period_warning.html" %}
 
   {% for transaction in transactions %}
   <div class="col-12" id="{{transaction.detail.id}}">
-    <div class="card text-center my-4 bg-secondary bg-opacity-25 text-white border-0 shadow">
-      <div class="card-header py-2 fs-5 fw-bold d-flex justify-content-between align-items-center">
-        {{transaction.detail.id}}: {{transaction.detail.title}}
-        <div>
-          <a class="btn btn-secondary bg-secondary bg-opacity-25" title="Detalhes Sobre a Transação"
-          href="{% url 'core:transaction-update' pk=transaction.detail.id %}">
-          <span class="material-icons-outlined">settings</span>
-        </a>
-        <a class="btn btn-secondary bg-secondary bg-opacity-25" title="Detalhes Sobre a Transação"
-          href="{% url 'core:transaction-detail' pk=transaction.detail.id %}">
-          <span class="material-icons-outlined">file_open</span>
-        </a>
+    <div class="card my-3 border border-secondary-subtle rounded-3 shadow-sm overflow-hidden opacity-75">
+      <div class="card-header py-2 px-3 d-flex justify-content-between align-items-center border-bottom border-secondary-subtle bg-secondary bg-opacity-25">
+        <span class="fw-semibold text-white small">
+          <span class="text-secondary me-1">#{{transaction.detail.id}}</span>{{transaction.detail.title}}
+        </span>
+        <div class="d-flex gap-1">
+          <a class="btn btn-sm border-0 text-secondary" title="Editar"
+            href="{% url 'core:transaction-update' pk=transaction.detail.id %}">
+            <span class="material-icons-outlined" style="font-size:1rem;">settings</span>
+          </a>
+          <a class="btn btn-sm border-0 text-secondary" title="Detalhes"
+            href="{% url 'core:transaction-detail' pk=transaction.detail.id %}">
+            <span class="material-icons-outlined" style="font-size:1rem;">file_open</span>
+          </a>
         </div>
       </div>
       <div class="card-body p-0">
         <div class="table-responsive">
-          <table class="table table-sm m-0 table-dark">
-            <thead>
+          <table class="table table-dark table-sm table-hover mb-0">
+            <thead class="border-bottom border-secondary-subtle">
               <tr>
-                <th>Data</th>
-                <th>Conta</th>
-                <th>Debito</th>
-                <th>Credito</th>
-                <th>D/C</th>
-                <th>Saldo</th>
+                <th class="bg-transparent text-white small">Data</th>
+                <th class="bg-transparent text-white small">Conta</th>
+                <th class="bg-transparent text-white small">Débito</th>
+                <th class="bg-transparent text-white small">Crédito</th>
+                <th class="bg-transparent text-white small">D/C</th>
+                <th class="bg-transparent text-white small">Saldo</th>
               </tr>
             </thead>
             <tbody>
               {% for operation in transaction.detail.operations %}
               <tr>
-                <td>{{operation.date}}</td>
-                <td>{{operation.account_name}}</td>
-                <td>{{operation.debit|to_current_currency:app_settings|intcomma}}</td>
-                <td>{{operation.credit|to_current_currency:app_settings|intcomma}}</td>
-                <td>{{operation.get_type_display}}</td>
-                <td>{{operation.account_balance|to_current_currency:app_settings|intcomma}} <span
-                    class="badge bg-secondary">{{app_settings.current_currency.label}}</span></td>
+                <td class="bg-transparent text-white small">{{operation.date}}</td>
+                <td class="bg-transparent text-white small">{{operation.account_name}}</td>
+                <td class="bg-transparent text-white small">{{operation.debit|to_current_currency:app_settings|intcomma}}</td>
+                <td class="bg-transparent text-white small">{{operation.credit|to_current_currency:app_settings|intcomma}}</td>
+                <td class="bg-transparent text-white small">{{operation.get_type_display}}</td>
+                <td class="bg-transparent text-white small">
+                  {{operation.account_balance|to_current_currency:app_settings|intcomma}}
+                  <span class="badge bg-secondary bg-opacity-50">{{app_settings.current_currency.label}}</span>
+                </td>
               </tr>
               {% endfor %}
-              <tr>
-                <td  colspan="3"></td>
-                <td >Σ = {{transaction.detail.debit_sum|to_current_currency:app_settings|intcomma}}</td>
-                <td >Σ = {{transaction.detail.credit_sum|to_current_currency:app_settings|intcomma}}</td>
-                <td  colspan="2"></td>
+              <tr class="bg-secondary bg-opacity-10">
+                <td class="bg-transparent text-secondary small" colspan="3"></td>
+                <td class="bg-transparent text-secondary small">Σ = {{transaction.detail.debit_sum|to_current_currency:app_settings|intcomma}}</td>
+                <td class="bg-transparent text-secondary small">Σ = {{transaction.detail.credit_sum|to_current_currency:app_settings|intcomma}}</td>
+                <td class="bg-transparent" colspan="2"></td>
               </tr>
             </tbody>
           </table>
@@ -67,10 +74,10 @@
     </div>
   </div>
   {% empty %}
-  <p class="text-center lead">
-    Você ainda não arquivou nenhuma transação.</p>
-  </p>
-
+  <div class="text-center py-5 text-secondary">
+    <span class="material-icons-outlined d-block mb-2" style="font-size:2rem;">archive</span>
+    <p class="small mb-0">Nenhuma transação arquivada.</p>
+  </div>
   {% endfor %}
 </div>
 

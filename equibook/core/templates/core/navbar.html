@@ -1,6 +1,9 @@
-<nav class="navbar navbar-expand-lg navbar-dark">
+<nav class="navbar navbar-expand-lg navbar-dark py-2">
   <div class="container-fluid">
-    <a class="navbar-brand" href="{% url 'core:balance-accounts' %}">EquiBook</a>
+    <a class="navbar-brand d-flex align-items-center gap-1" href="{% url 'core:balance-accounts' %}">
+      <span class="material-icons-outlined" style="font-size: 1.3rem;">auto_stories</span>
+      EquiBook
+    </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
       aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -43,13 +46,14 @@
         {% endif %}
 
       </ul>
-      <div class="d-flex" role="search">
-        <a class="btn btn-sm border-0 text-white" title="{{app_settings.entity}}"
-          href="{% url 'core:setting-update' %}">
-          <span class="material-icons-outlined">person</span>
+      <div class="d-flex align-items-center gap-1">
+        <a class="btn btn-sm border-secondary-subtle text-white d-flex align-items-center gap-1"
+          title="{{app_settings.entity}}" href="{% url 'core:setting-update' %}">
+          <span class="material-icons-outlined" style="font-size: 1.1rem;">person</span>
+          <span class="d-none d-lg-inline small">{{app_settings.entity}}</span>
         </a>
-        <a class="btn btn-sm border-0 btn btn-sm border-0 text-white" title="Sair" href="{% url  'users:logout' %}">
-          <span class="material-icons-outlined">logout</span>
+        <a class="btn btn-sm border-0 text-secondary d-flex align-items-center" title="Sair" href="{% url 'users:logout' %}">
+          <span class="material-icons-outlined" style="font-size: 1.1rem;">logout</span>
         </a>
       </div>
     </div>

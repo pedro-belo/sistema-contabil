@@ -3,91 +3,80 @@
 
 <section>
   {% for operation in operations %}
-  <div class="mt-4 text-end fw-bold text-info">
-    <small>{{operation.date}}</small>
+  <div class="mb-1 text-end">
+    <small class="text-secondary">{{operation.date}}</small>
   </div>
-  <article class="rounded bg-secondary bg-opacity-25 border border-secondary">
-    <div
-      class="px-2 py-1 d-flex justify-content-between fw-bold text-white align-items-center rounded-top bg-secondary bg-opacity-50 border-bottom border-dark">
-      <p class="fs-5 fw-bold  p-2 text-white m-0">
-        Sobre a operação
-      </p>
-      <a class="btn btn-sm border-0 text-white mx-1" title="Adicionar Documento"
+  <article class="border border-secondary-subtle rounded-3 shadow-sm overflow-hidden mb-4">
+    <div class="px-3 py-2 d-flex justify-content-between align-items-center border-bottom border-secondary-subtle bg-secondary bg-opacity-25">
+      <span class="fw-semibold text-light small text-uppercase">Operação</span>
+      <a class="btn btn-sm border-0 text-secondary" title="Adicionar Documento"
         href="{% url 'core:operation-meta-create' pk=operation.id %}">
-        <span class="material-icons-outlined">upload</span>
+        <span class="material-icons-outlined" style="font-size:1rem;">upload</span>
       </a>
     </div>
-    <div class="p-2">
-      <div class="row">
-
+    <div class="p-3">
+      <div class="row g-3 mb-2">
         <div class="col-12">
-          <p><strong>Desdobramentos</strong>:
-            {% for account in operation.account.get_path %}
-            {% if operation.account_id != account.id %}
-            <a href="{% url 'core:account-detail' pk=account.id %}"
-              class="badge text-decoration-none bg-secondary">{{account.name}}</a>
-            {% endif %}
-            {% endfor %}
-          </p>
-        </div>
-
-        <div class="col-4">
-          <p>
-            <strong>Conta</strong>: <br><a href="{% url 'core:account-detail' pk=operation.account_id %}"
-              class="badge text-decoration-none bg-success">
-              {{operation.account.name}}
-            </a>
-          </p>
-        </div>
-
-        <div class="col-4">
-          <p><strong>Valor</strong>: <br>{{operation.value|to_current_currency:app_settings|intcomma}}
-            {{app_settings.current_currency.label}}</p>
+          <span class="text-secondary small">Desdobramentos: </span>
+          {% for account in operation.account.get_path %}
+          {% if operation.account_id != account.id %}
+          <a href="{% url 'core:account-detail' pk=account.id %}"
+            class="badge text-decoration-none bg-secondary bg-opacity-50 me-1">{{account.name}}</a>
+          {% endif %}
+          {% endfor %}
         </div>
         <div class="col-4">
-          <p><strong>Tipo de Operação</strong>: <br>{{operation.get_type_display}}<br></p>
+          <p class="text-secondary small mb-1">Conta</p>
+          <a href="{% url 'core:account-detail' pk=operation.account_id %}"
+            class="badge text-decoration-none bg-success bg-opacity-75 fs-6">
+            {{operation.account.name}}
+          </a>
         </div>
-
+        <div class="col-4">
+          <p class="text-secondary small mb-1">Valor</p>
+          <span class="fw-semibold">{{operation.value|to_current_currency:app_settings|intcomma}}</span>
+          <span class="text-secondary small">{{app_settings.current_currency.label}}</span>
+        </div>
+        <div class="col-4">
+          <p class="text-secondary small mb-1">Tipo</p>
+          <span class="fw-semibold">{{operation.get_type_display}}</span>
+        </div>
       </div>
-      <p>
-      </p>
-      <hr>
-      <p class="fw-bold">Documentos & Anexos</p>
-      <ul class="list-group">
+
+      <hr class="border-secondary-subtle">
+
+      <p class="fw-semibold small text-uppercase text-secondary mb-2">Documentos & Anexos</p>
+      <ul class="list-group list-group-flush">
         {% for item in operation.operation_meta.all %}
-        <li
-          class="list-group-item d-flex justify-content-between align-items-start bg-light text-white bg-opacity-10 border-dark">
-          <div class="ms-2 me-auto">
-            <div class="fw-bold">Descrição</div>
-            {{item.description}}
-          </div>
+        <li class="list-group-item d-flex justify-content-between align-items-center bg-secondary bg-opacity-10 border-secondary-subtle text-white">
           <div>
+            <p class="fw-semibold small mb-0">Descrição</p>
+            <p class="small text-secondary mb-0">{{item.description}}</p>
+          </div>
+          <div class="d-flex gap-1">
             {% if item.document %}
-            <a class="btn btn-sm border-0 mx-1" title="Download"
+            <a class="btn btn-sm border-0 text-secondary" title="Download"
               href="{% url 'core:operation-meta-download' pk=item.id %}">
-              <span class="material-icons-outlined">download</span>
+              <span class="material-icons-outlined" style="font-size:1rem;">download</span>
             </a>
             {% endif %}
-
-            <a class="btn btn-sm border-0 mx-1" title="Remover" href="#" data-bs-toggle="modal"
+            <a class="btn btn-sm border-0 text-danger" title="Remover" href="#" data-bs-toggle="modal"
               data-bs-target="#delete-o-meta-{{item.id}}">
-              <span class="material-icons-outlined">delete</span>
+              <span class="material-icons-outlined" style="font-size:1rem;">delete</span>
             </a>
-
-
             <div class="modal fade bg-dark bg-opacity-25" id="delete-o-meta-{{item.id}}" tabindex="-1"
               aria-labelledby="delete-o-meta-{{item.id}}-label" aria-hidden="true">
               <div class="modal-dialog">
                 <div class="modal-content bg-dark bg-opacity-80 border-secondary">
                   <div class="modal-header border-secondary">
-                    <h5 class="modal-title" id="delete-o-meta-{{item.id}}-label">Confirmação de exclusão</h5>
+                    <h5 class="modal-title" id="delete-o-meta-{{item.id}}-label">Confirmar exclusão</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
-                    <p>Tem certeze que deseja remover este registro ?</p>
-                    <p><b>Descrição</b>: {{item.description}}</p>
+                    <p class="mb-1">Tem certeza que deseja remover este registro?</p>
+                    <p class="small text-secondary mb-0"><b>Descrição</b>: {{item.description}}</p>
                   </div>
-                  <div class="modal-footer modal-footer border-secondary">
+                  <div class="modal-footer border-secondary">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
                     <form action="{% url 'core:operation-meta-delete' pk=item.id %}" method="post">
                       {% csrf_token %}
@@ -100,17 +89,18 @@
           </div>
         </li>
         {% empty %}
-        <p class="m-1">Nenhum registro encontrado.</p>
+        <li class="list-group-item bg-transparent border-secondary-subtle text-secondary small py-2">
+          Nenhum documento anexado.
+        </li>
         {% endfor %}
       </ul>
     </div>
   </article>
   {% empty %}
-  <p class="text-center lead">
-    Você ainda não cadastrou nenhuma operação de débito/crédito. Para realizar seus lançamentos, clique <a
-      href="{% url 'core:transaction-create' %}" class="badge bg-primary text-decoration-none">aqui</a> ou em <span
-      class="material-icons-outlined bg-light text-dark shadow rounded mx-2 p-1">add</span> no menu
-    acima.
-  </p>
+  <div class="text-center py-5 text-secondary">
+    <span class="material-icons-outlined d-block mb-2" style="font-size:2rem;">add_circle_outline</span>
+    <p class="mb-1 small">Nenhuma operação cadastrada.</p>
+    <p class="small">Use o botão <strong>+</strong> acima para adicionar lançamentos.</p>
+  </div>
   {% endfor %}
 </section>

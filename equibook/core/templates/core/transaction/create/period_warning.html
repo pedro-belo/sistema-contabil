@@ -1,15 +1,11 @@
-<section class="mx-auto shadow rounded" style="max-width: 600px;">
-  <h1 class="fs-2 bg-warning text-center p-2 text-dark rounded-top">Configuração do Período Contábil</h1>
-  <div class="py-2 px-3">
-    <p class="lead" style="font-size: 18px; margin-bottom: 20px;">Para cadastrar uma transação de débito ou crédito,
-      é
-      necessário configurar o período contábil correspondente.</p>
-    <p>O período contábil determina o intervalo de tempo para o qual as transações financeiras serão registradas.
-      Certifique-se de que o período contábil esteja corretamente configurado antes de prosseguir com o cadastro
-      das
-      transações.</p>
-    <p><a class="btn btn-sm btn-warning" href="{% url 'core:accounting-period-create' %}">Clique aqui</a> para
-      iniciar
-      seu primeiro período contábil.</p>
+<div class="mx-auto border border-warning border-opacity-50 rounded-3 shadow-sm overflow-hidden" style="max-width: 600px;">
+  <div class="px-3 py-2 bg-warning bg-opacity-10 border-bottom border-warning border-opacity-25 d-flex align-items-center gap-2">
+    <span class="material-icons-outlined text-warning" style="font-size:1.1rem;">info</span>
+    <span class="fw-semibold text-warning small text-uppercase">Período Contábil necessário</span>
   </div>
-</section>
+  <div class="p-4">
+    <p class="mb-2">Para cadastrar uma transação, é necessário configurar o período contábil correspondente.</p>
+    <p class="text-secondary small mb-3">O período contábil determina o intervalo de tempo para o qual os lançamentos serão registrados.</p>
+    <a class="btn btn-sm btn-warning" href="{% url 'core:accounting-period-create' %}">Configurar período contábil</a>
+  </div>
+</div>

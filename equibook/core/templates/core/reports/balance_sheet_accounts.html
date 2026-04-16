@@ -6,22 +6,25 @@
 
 {% block content %}
 
-<h1 class="p-4 text-center">Contas Patrimoniais</h1>
+<div class="mb-4">
+  <h1 class="fw-bold fs-4 mb-1">Contas Patrimoniais</h1>
+  <p class="text-secondary small mb-0">Visão geral dos ativos, passivos e patrimônio líquido</p>
+</div>
 
 {% include "core/snippets/period_warning.html" %}
 
-<section class="row">
+<section class="row g-3">
 
-  <article class="col-md-5 offset-md-1 col-sm-12 px-0 bg-secondary bg-opacity-25 rounded mb-3">
+  <article class="col-md-5 offset-md-1 col-sm-12 px-0 border border-secondary-subtle rounded-3 shadow-sm overflow-hidden mb-3">
     {% include "core/snippets/account_resume.html" with account=asset ul_size=60 %}
   </article>
 
   <article class="col-md-5 col-sm-12 mx-md-4">
-    <div class="row">
-      <article class="col-12 px-0 bg-secondary bg-opacity-25 rounded mb-3">
+    <div class="row g-3">
+      <article class="col-12 px-0 border border-secondary-subtle rounded-3 shadow-sm overflow-hidden mb-3">
         {% include "core/snippets/account_resume.html" with account=liability ul_size=25 %}
       </article>
-      <article class="col-12 px-0 bg-secondary bg-opacity-25 rounded">
+      <article class="col-12 px-0 border border-secondary-subtle rounded-3 shadow-sm overflow-hidden">
         {% include "core/snippets/account_resume.html" with account=equity ul_size=25 %}
       </article>
     </div>

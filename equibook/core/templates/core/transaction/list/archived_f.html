@@ -2,134 +2,90 @@
 
 {% load to_current_currency %}
 
-<div class="card text-center my-4 border-0 bg-secondary bg-opacity-25">
-  <div class="card-header py-2 fs-5 text-white fw-bold bg-secondary bg-opacity-50">
-    {{transaction.id}}: {{transaction.title}}
+<div class="card my-3 border border-secondary-subtle rounded-3 shadow-sm overflow-hidden">
+  <div class="card-header py-2 px-3 d-flex justify-content-between align-items-center border-bottom border-secondary-subtle bg-secondary bg-opacity-25">
+    <span class="fw-semibold text-white small">
+      <span class="text-secondary me-1">#{{transaction.id}}</span>{{transaction.title}}
+    </span>
+    <div class="d-flex gap-1">
+      {% if view.period.id == transaction.period_id %}
+      <a class="btn btn-sm border-0 text-secondary" title="Nova operação"
+        href="{% url 'core:operation-create' transaction_id=transaction.id %}">
+        <span class="material-icons-outlined" style="font-size:1rem;">add</span>
+      </a>
+      {% endif %}
+      <a class="btn btn-sm border-0 text-secondary" title="Balancete"
+        href="{% url 'core:trial-balance' pk=transaction.id %}">
+        <span class="material-icons-outlined" style="font-size:1rem;">event_note</span>
+      </a>
+      <a class="btn btn-sm border-0 text-secondary" title="Detalhes"
+        href="{% url 'core:transaction-detail' pk=transaction.id %}">
+        <span class="material-icons-outlined" style="font-size:1rem;">file_open</span>
+      </a>
+      {% if view.period.id == transaction.period_id %}
+      {% if transaction.has_previous %}
+      <a class="btn btn-sm border-0 text-secondary" title="Mover para baixo"
+        href="{% url 'core:transaction-move-down' pk=transaction.id %}#{{transaction.id}}">
+        <span class="material-icons-outlined" style="font-size:1rem;">move_down</span>
+      </a>
+      {% else %}
+      <a class="btn btn-sm border-0 text-secondary disabled" href="#">
+        <span class="material-icons-outlined" style="font-size:1rem;">move_down</span>
+      </a>
+      {% endif %}
+      {% if not transaction.has_next %}
+      <a class="btn btn-sm border-0 text-secondary disabled" href="#">
+        <span class="material-icons-outlined" style="font-size:1rem;">move_up</span>
+      </a>
+      {% include "./remove_transaction.html" with transaction=transaction %}
+      {% else %}
+      <a class="btn btn-sm border-0 text-secondary" title="Mover para cima"
+        href="{% url 'core:transaction-move-up' pk=transaction.id %}#{{transaction.id}}">
+        <span class="material-icons-outlined" style="font-size:1rem;">move_up</span>
+      </a>
+      {% endif %}
+      {% endif %}
+    </div>
   </div>
-  <div class="card-body p-0" style="max-height: 340px;overflow-y: scroll;">
+  <div class="card-body p-0" style="max-height: 340px; overflow-y: auto;">
     <div class="table-responsive">
-      <table class="table table-sm m-0">
-        <thead>
-          <tr class="border-dark">
-
-            {% if view.period.id == transaction.period_id %}
-            <th class="bg-transparent text-white">
-            </th>
-            {% endif %}
-
-            <th class="bg-transparent text-white">
-              Data
-            </th>
-            <th class="bg-transparent text-white">
-              Conta
-            </th>
-            <th class="bg-transparent text-white">
-              Debito
-            </th>
-            <th class="bg-transparent text-white">
-              Credito
-            </th>
-            <th class="bg-transparent text-white">
-              D/C
-            </th>
-            <th class="bg-transparent text-white">
-              Saldo
-            </th>
+      <table class="table table-dark table-sm table-hover mb-0">
+        <thead class="border-bottom border-secondary-subtle">
+          <tr>
+            {% if view.period.id == transaction.period_id %}<th class="bg-transparent text-white small"></th>{% endif %}
+            <th class="bg-transparent text-white small">Data</th>
+            <th class="bg-transparent text-white small">Conta</th>
+            <th class="bg-transparent text-white small">Débito</th>
+            <th class="bg-transparent text-white small">Crédito</th>
+            <th class="bg-transparent text-white small">D/C</th>
+            <th class="bg-transparent text-white small">Saldo</th>
           </tr>
         </thead>
         <tbody>
           {% for operation in transaction.operations %}
-          <tr class="border-dark">
-
+          <tr>
             {% if view.period.id == transaction.period_id %}
-            <td class="bg-transparent text-white">
-              {% include "./remove_operation.html" with operation=operation%}
-            </td>
+            <td class="bg-transparent text-white">{% include "./remove_operation.html" with operation=operation %}</td>
             {% endif %}
-
-            <td class="bg-transparent text-white">
-              {{operation.date}}
-            </td>
-            <td class="bg-transparent text-white">
-              {{operation.account_name}}
-            </td>
-            <td class="bg-transparent text-white">
-              {{operation.debit|to_current_currency:app_settings|intcomma}}
-            </td>
-            <td class="bg-transparent text-white">
-              {{operation.credit|to_current_currency:app_settings|intcomma}}
-            </td>
-            <td class="bg-transparent text-white">
-              {{operation.get_type_display}}
-            </td>
-            <td class="bg-transparent text-white">
+            <td class="bg-transparent text-white small">{{operation.date}}</td>
+            <td class="bg-transparent text-white small">{{operation.account_name}}</td>
+            <td class="bg-transparent text-white small">{{operation.debit|to_current_currency:app_settings|intcomma}}</td>
+            <td class="bg-transparent text-white small">{{operation.credit|to_current_currency:app_settings|intcomma}}</td>
+            <td class="bg-transparent text-white small">{{operation.get_type_display}}</td>
+            <td class="bg-transparent text-white small">
               {{operation.account_balance|to_current_currency:app_settings|intcomma}}
-              <span class="badge bg-secondary">
-                {{app_settings.current_currency.label}}
-              </span>
+              <span class="badge bg-secondary bg-opacity-50">{{app_settings.current_currency.label}}</span>
             </td>
           </tr>
           {% endfor %}
-          <tr class="border-dark">
-            <td class="bg-transparent text-white" colspan="3"></td>
-            <td class="bg-transparent text-white">
-              Σ = {{transaction.debit_sum|to_current_currency:app_settings|intcomma}}
-            </td>
-            <td class="bg-transparent text-white">Σ =
-              {{transaction.credit_sum|to_current_currency:app_settings|intcomma}}
-            </td>
-            <td class="bg-transparent text-white" colspan="2"></td>
+          <tr class="bg-secondary bg-opacity-10">
+            <td class="bg-transparent text-secondary small" colspan="3"></td>
+            <td class="bg-transparent text-secondary small">Σ = {{transaction.debit_sum|to_current_currency:app_settings|intcomma}}</td>
+            <td class="bg-transparent text-secondary small">Σ = {{transaction.credit_sum|to_current_currency:app_settings|intcomma}}</td>
+            <td class="bg-transparent" colspan="2"></td>
           </tr>
         </tbody>
       </table>
     </div>
-  </div>
-  <div class="card-footer border-0 bg-secondary bg-opacity-50">
-    {% if view.period.id == transaction.period_id %}
-    <a class="btn btn-light btn-icon shadow-sm" title="Nova operação"
-      href="{% url 'core:operation-create' transaction_id=transaction.id %}">
-      <span class="material-icons-outlined">add</span>
-    </a>
-    {% endif %}
-
-    <a class="btn btn-light btn-icon shadow-sm" title="Balancete de Verificação"
-      href="{% url 'core:trial-balance' pk=transaction.id %}">
-      <span class="material-icons-outlined">event_note</span>
-    </a>
-
-    <a class="btn btn-light btn-icon shadow-sm" title="Detalhes Sobre a Transação"
-      href="{% url 'core:transaction-detail' pk=transaction.id %}">
-      <span class="material-icons-outlined">file_open</span>
-    </a>
-
-    {% if view.period.id == transaction.period_id %}
-    {% if transaction.has_previous %}
-    <a class="btn btn-light btn-icon shadow-sm" title="Mover para baixo"
-      href="{% url 'core:transaction-move-down' pk=transaction.id %}#{{transaction.id}}">
-      <span class="material-icons-outlined">move_down</span>
-    </a>
-    {% else %}
-    <a class="btn btn-light btn-icon shadow-sm disabled" title="Mover para baixo" href="#">
-      <span class="material-icons-outlined text-dark">move_down</span>
-    </a>
-    {% endif %}
-    {% endif %}
-
-    {% if view.period.id == transaction.period_id %}
-    {% if not transaction.has_next %}
-    <a class="btn btn-light btn-icon shadow-sm disabled" title="Mover para cima" href="#">
-      <span class="material-icons-outlined text-dark">move_up</span>
-    </a>
-
-    {% include "./remove_transaction.html" with transaction=transaction %}
-
-    {% else %}
-    <a class="btn btn-light btn-icon shadow-sm" title="Mover para cima"
-      href="{% url 'core:transaction-move-up' pk=transaction.id %}#{{transaction.id}}">
-      <span class="material-icons-outlined">move_up</span>
-    </a>
-    {% endif %}
-    {% endif %}
-
   </div>
 </div>

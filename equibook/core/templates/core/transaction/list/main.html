@@ -5,36 +5,35 @@
 
 {% block content %}
 
-<h1 class="p-4 text-center">Históricos de Transações</h1>
+<div class="mb-4">
+  <h1 class="fw-bold fs-4 mb-1">Histórico de Transações</h1>
+  <p class="text-secondary small mb-0">Lançamentos do período contábil atual</p>
+</div>
 
 <div class="row">
-  
+
   {% include "core/snippets/period_warning.html" %}
 
   {% for transaction in transactions %}
-
   <div class="col-12" id="{{transaction.detail.id}}">
-
     {% if transaction.detail.archived %}
     {% include "./archived_t.html" with transaction=transaction.detail %}
-
     {% else %}
-    
     {% include "./archived_f.html" with transaction=transaction.detail %}
-
     {% endif %}
-
   </div>
   {% empty %}
-  <p href="{% url 'core:transaction-create' %}" class="text-center lead">
-    Você ainda não cadastrou nenhuma transação. Para cadastrar uma nova transação e realizar seus lançamentos, clique <a href="{% url 'core:transaction-create' %}" class="badge bg-primary text-decoration-none">aqui</a>.
-  </p>
-  
+  <div class="text-center py-5 text-secondary">
+    <span class="material-icons-outlined d-block mb-2" style="font-size:2rem;">receipt_long</span>
+    <p class="mb-1">Nenhuma transação cadastrada.</p>
+    <a href="{% url 'core:transaction-create' %}" class="btn btn-sm btn-primary mt-2">Nova transação</a>
+  </div>
   {% endfor %}
 
   {% if transactions %}
   {% include "core/snippets/pagination.html" with paginator=paginator page_obj=page_obj %}
   {% endif %}
+
 </div>
 
 {% endblock %}

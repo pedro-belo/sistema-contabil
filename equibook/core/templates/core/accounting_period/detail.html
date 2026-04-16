@@ -2,61 +2,59 @@
 
 {% block content %}
 
-<header class="mt-4 p-2 text-center">
-  <h1>Período Contábil</h1>
-  <p>De <strong>{{period.start_date}}</strong> até <strong>{{period.end_date}}</strong></p>
-</header>
+<div class="mb-4">
+  <h1 class="fw-bold fs-4 mb-1">Período Contábil</h1>
+  <p class="text-secondary small mb-0">
+    De <strong class="text-white">{{period.start_date}}</strong>
+    até <strong class="text-white">{{period.end_date}}</strong>
+  </p>
+</div>
 
-<section class="shadow p-4 mx-auto text-center bg-secondary bg-opacity-25 rounded">
-
-  {% if period.is_period_closeable %}
-
-  {% if period.status == period.Status.IN_PROGRESS %}
-
-  {% include "./period_in_progress.html" %}
-
-  {% elif period.status == period.Status.CLOSING_ACCOUNTS %}
-
-  {% include "./period_closing_accounts.html" %}
-
-  {% endif %}
-
-  {% else %}
-
-  {% if period.days_to_close_period < 1 %} <p class="text-center lead p-4">
-    O período contábil atual se encerra hoje.
-    </p>
-    {% elif period.days_to_close_period < 2 %} Falta <span class="fs-2 fw-bold mx-1 text-info">1</span> dia até o
-      encerramento do período contábil atual.
-      {% else %}
-      <p class="text-center lead p-4">
-        Faltam <span class="fs-2 fw-bold mx-1 text-info">{{period.days_to_close_period}}</span> dias até o encerramento
-        do período contábil atual.
-      </p>
+<div class="border border-secondary-subtle rounded-3 shadow-sm overflow-hidden mb-4">
+  <div class="px-3 py-2 border-bottom border-secondary-subtle bg-secondary bg-opacity-25">
+    <span class="fw-semibold text-light small text-uppercase">Status</span>
+  </div>
+  <div class="p-4">
+    {% if period.is_period_closeable %}
+      {% if period.status == period.Status.IN_PROGRESS %}
+        {% include "./period_in_progress.html" %}
+      {% elif period.status == period.Status.CLOSING_ACCOUNTS %}
+        {% include "./period_closing_accounts.html" %}
       {% endif %}
-
-
-      {% endif %}
-
-</section>
+    {% else %}
+      <div class="text-center py-2">
+        {% if period.days_to_close_period < 1 %}
+        <p class="lead mb-0">O período contábil atual <strong>se encerra hoje</strong>.</p>
+        {% elif period.days_to_close_period < 2 %}
+        <p class="lead mb-0">Falta <span class="fs-2 fw-bold mx-1 text-info">1</span> dia até o encerramento.</p>
+        {% else %}
+        <p class="lead mb-0">
+          Faltam <span class="fs-2 fw-bold mx-1 text-info">{{period.days_to_close_period}}</span> dias até o encerramento.
+        </p>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</div>
 
 {% if previous_periods.count > 0 %}
-<h2 class="text-center mt-4 mb-3">Períodos Contábeis Anteriores</h2>
-<section class="text-center p-2 bg-secondary bg-opacity-25 rounded">
+<div class="mb-2">
+  <h2 class="fw-semibold fs-5 mb-1">Períodos Anteriores</h2>
+</div>
+<div class="border border-secondary-subtle rounded-3 shadow-sm overflow-hidden">
   {% for previous in previous_periods %}
-  <div class="d-flex justify-content-between align-items-center border-bottom border-dark">
-    <p>
-      <strong>De</strong> {{previous.start_date}} <br>
-      <strong>até</strong> {{previous.end_date}}
-    </p>
-
+  <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom border-secondary-subtle">
+    <span class="small text-white">
+      <span class="text-secondary">De</span> {{previous.start_date}}
+      <span class="text-secondary ms-2">até</span> {{previous.end_date}}
+    </span>
     <a href="{% url 'core:transaction-list' period_id=previous.id %}"
-      title="Verifica lista de transações para este período" class="btn btn-light btn-icon shadow-sm  border-0 mx-1">
-      <span class="material-icons-outlined">list</span>
+      title="Ver transações deste período" class="btn btn-sm border-0 text-secondary">
+      <span class="material-icons-outlined" style="font-size:1rem;">list</span>
     </a>
   </div>
   {% endfor %}
-</section>
+</div>
 {% endif %}
 
 {% endblock %}

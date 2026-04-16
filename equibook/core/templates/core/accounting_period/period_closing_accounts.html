@@ -1,21 +1,21 @@
-<header class="text-center">
-  <h2>Operação Realizada com sucesso!</h2>
-  <p class="m-1 lead">Para encerrar as contas de receitas e despesas e concluir o procedimento, preencha o
-    formulário com os dados do novo período e clique em continuar.</p>
-</header>
+<div class="mb-3 d-flex align-items-center gap-2">
+  <span class="material-icons-outlined text-success">check_circle</span>
+  <div>
+    <h2 class="fw-semibold fs-5 mb-0">Operação realizada com sucesso!</h2>
+    <p class="text-secondary small mb-0">Preencha os dados do novo período para concluir o encerramento.</p>
+  </div>
+</div>
 
 {% if preconditions %}
-<p class="fw-bold text-danger">
-  Verifique as transações
+<div class="border border-danger border-opacity-50 rounded-3 p-3 mb-3">
+  <p class="fw-semibold text-danger small mb-1">Verifique as transações antes de continuar:</p>
   {% for precondition in preconditions %}
-  <a class="badge bg-danger text-decoration-none" href="#">{{precondition.instance.title}}</a>
+  <a class="badge bg-danger text-decoration-none me-1" href="#">{{precondition.instance.title}}</a>
   {% endfor %}
-  antes de continuar.
-</p>
+</div>
 {% endif %}
 
-
-<hr class="mx-auto pb-2 bg-success rounded" style="max-width: 620px;">
+<hr class="border-secondary-subtle mb-3">
 
 <form accept="{% url 'core:accounting-period-detail' %}" method="post" class="row mx-auto" style="max-width: 30rem;">
 

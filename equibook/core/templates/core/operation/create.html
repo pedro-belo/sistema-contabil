@@ -1,9 +1,12 @@
 {% extends "core/base.html" %} {% block content %}
 
-<header class="mt-4 p-4 text-center">
-  <h1>Nova operação</h1>
-  <a class="text-white" href="{% url 'core:transaction-detail' pk=transaction.id %}">{{transaction.title}}</a>
-</header>
+<div class="mb-4">
+  <h1 class="fw-bold fs-4 mb-1">Nova Operação</h1>
+  <a class="text-secondary small text-decoration-none" href="{% url 'core:transaction-detail' pk=transaction.id %}">
+    <span class="material-icons-outlined align-middle" style="font-size:0.9rem;">chevron_left</span>
+    {{transaction.title}}
+  </a>
+</div>
 
 <div class="row">
 

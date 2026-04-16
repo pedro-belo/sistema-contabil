@@ -8,113 +8,99 @@
 
 {% block content %}
 
-<h1 class="h2 pt-4 text-center">{{account.name}}</h1>
-
-<ul class="nav justify-content-center mb-4">
-
-  {% if account.parent %}
-  <li class="nav-item">
-    <a href="{% url 'core:account-detail' pk=account.parent.pk %}"
-      class="btn btn-light btn-icon shadow-sm  border-0 mx-1">
-      <span class="material-icons-outlined">chevron_left</span>
+<div class="mb-3 d-flex justify-content-between align-items-start flex-wrap gap-2">
+  <div>
+    <h1 class="fw-bold fs-4 mb-1">{{account.name}}</h1>
+    {% if account.parent %}
+    <a href="{% url 'core:account-detail' pk=account.parent.pk %}" class="text-secondary small text-decoration-none">
+      <span class="material-icons-outlined align-middle" style="font-size:0.9rem;">chevron_left</span>
+      {{account.parent.name}}
     </a>
-  </li>
-  {% endif %}
-
-  <li class="nav-item">
+    {% endif %}
+  </div>
+  <div class="d-flex gap-2">
     <a href="{% url 'core:account-create' parent_id=account.pk %}"
-      class="btn btn-light btn-icon shadow-sm  border-0 mx-1" title="Novo desdobramento">
-      <span class="material-icons-outlined">create_new_folder</span>
+      class="btn btn-sm border-secondary-subtle text-white" title="Novo desdobramento">
+      <span class="material-icons-outlined align-middle" style="font-size:1rem;">create_new_folder</span>
     </a>
-  </li>
-
-  <li class="nav-item">
-    <a class="btn btn-light btn-icon shadow-sm border-0 mx-1" title="Editar conta"
+    <a class="btn btn-sm border-secondary-subtle text-white" title="Editar conta"
       href="{% url 'core:account-update' pk=account.pk %}">
-      <span class="material-icons-outlined">settings</span>
+      <span class="material-icons-outlined align-middle" style="font-size:1rem;">settings</span>
     </a>
-  </li>
+  </div>
+</div>
 
-</ul>
+<div class="row g-3">
 
-<div class="row">
-
-  <div class="col-sm-5 col-md-4 align-self-start bg-secondary bg-opacity-25 px-0 rounded text-white"
-    style="min-height: 60vh;overflow-x: scroll">
-
-    <p class="fs-5 fw-bold text-center p-2 text-white rounded-top bg-secondary bg-opacity-50">
-      Desdobramentos
-    </p>
-
-    <ul class="nav justify-content-center flex-column">
+  <div class="col-sm-5 col-md-4 border border-secondary-subtle rounded-3 shadow-sm overflow-hidden px-0 align-self-start">
+    <div class="px-3 py-2 border-bottom border-secondary-subtle bg-secondary bg-opacity-25">
+      <span class="fw-semibold text-light small text-uppercase">Desdobramentos</span>
+    </div>
+    <ul class="list-unstyled m-0" style="min-height: 60vh; overflow-y: auto;">
       {% for parent in account.account_set.all %}
-      <li class="nav-item my-1">
-        <a class="nav-link d-flex justify-content-between text-white"
+      <li class="px-3 py-2 border-bottom border-secondary-subtle">
+        <a class="d-flex justify-content-between align-items-center text-decoration-none text-white"
           href="{% url 'core:account-detail' pk=parent.pk %}">
-          {{parent.name}}
-          <small class="badge bg-dark">
+          <span class="fw-medium">{{parent.name}}</span>
+          <span class="badge bg-secondary bg-opacity-50 small">
             {{parent.total_account_balance|to_current_currency:app_settings|intcomma}}
-          </small>
+          </span>
         </a>
       </li>
       {% empty %}
-      <li class="nav-item my-1">
-        <p class="text-center">Não há desdobramentos para esta conta.</p>
+      <li class="px-3 py-4 text-center text-secondary small">
+        <span class="material-icons-outlined d-block mb-1" style="font-size:1.5rem;">folder_open</span>
+        Não há desdobramentos para esta conta.
       </li>
       {% endfor %}
     </ul>
   </div>
 
-  <div class="col">
-    <div class="rounded bg-secondary bg-opacity-25" style="height: 60vh;overflow-x: scroll">
-      <table class="table table-dark">
-        <thead>
-          <tr class="fs-5 fw-bold p-2 bg-secondary bg-opacity-50">
-            <th class="bg-transparent text-white" colspan="1">Lista de Transações</th>
-            <th class="bg-transparent text-white" colspan="2">D|C</th>
+  <div class="col border border-secondary-subtle rounded-3 shadow-sm overflow-hidden px-0">
+    <div class="px-3 py-2 border-bottom border-secondary-subtle bg-secondary bg-opacity-25">
+      <span class="fw-semibold text-light small text-uppercase">Transações</span>
+    </div>
+    <div style="height: 60vh; overflow-y: auto;">
+      <table class="table table-dark table-hover mb-0">
+        <thead class="border-bottom border-secondary-subtle">
+          <tr>
+            <th class="bg-transparent text-white fw-semibold small text-uppercase">Título</th>
+            <th class="bg-transparent text-white fw-semibold small text-uppercase">D / C</th>
+            <th class="bg-transparent text-white fw-semibold small text-uppercase"></th>
           </tr>
         </thead>
-
         <tbody>
           {% for transaction in transactions %}
-
           <tr>
-            <td class="bg-transparent border-dark text-white">
-              {{transaction.title}}
-            </td>
-            <td class="bg-transparent border-dark text-white">
+            <td class="bg-transparent text-white">{{transaction.title}}</td>
+            <td class="bg-transparent text-white small">
               {{transaction.debit_sum|to_current_currency:app_settings|intcomma}} /
               {{transaction.credit_sum|to_current_currency:app_settings|intcomma}}
             </td>
-            <td class="text-end bg-transparent border-dark text-white">
-              <a class="btn btn-sm btn-icon" title="Balanço" href="{% url 'core:trial-balance' pk=transaction.id %}">
-                <span title="Balanço" class="material-icons-outlined">event_note</span>
+            <td class="text-end bg-transparent">
+              <a class="btn btn-sm border-0 text-secondary" title="Balancete" href="{% url 'core:trial-balance' pk=transaction.id %}">
+                <span class="material-icons-outlined" style="font-size:1rem;">event_note</span>
               </a>
-              <a class="btn btn-sm btn-icon" title="Detalhes"
-                href="{% url 'core:transaction-detail' pk=transaction.id %}">
-                <span class="material-icons-outlined">
-                  file_open
-                </span>
+              <a class="btn btn-sm border-0 text-secondary" title="Detalhes" href="{% url 'core:transaction-detail' pk=transaction.id %}">
+                <span class="material-icons-outlined" style="font-size:1rem;">file_open</span>
               </a>
-              <a class="btn btn-sm btn-icon" title="Editar"
-                href="{% url 'core:transaction-update' pk=transaction.id %}">
-                <span class="material-icons-outlined">
-                  edit
-                </span>
+              <a class="btn btn-sm border-0 text-secondary" title="Editar" href="{% url 'core:transaction-update' pk=transaction.id %}">
+                <span class="material-icons-outlined" style="font-size:1rem;">edit</span>
               </a>
             </td>
           </tr>
           {% empty %}
           <tr>
-            <td class="text-center bg-transparent border-dark text-white" colspan="2">
-              Nenhuma transação foi realizada para esta conta.
+            <td class="text-center text-secondary py-4" colspan="3">
+              <span class="material-icons-outlined d-block mb-1" style="font-size:1.5rem;">receipt_long</span>
+              Nenhuma transação encontrada para esta conta.
             </td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
-
   </div>
+
 </div>
 {% endblock %}

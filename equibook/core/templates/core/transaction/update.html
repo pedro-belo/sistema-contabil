@@ -4,10 +4,13 @@
 
 {% block content %}
 
-<header class="mt-4 p-4 text-center">
-    <h1>Edição de Transação</h1>
-    <a class="text-dark" href="{% url 'core:transaction-detail' pk=form.instance.id %}">{{form.instance.title}}</a>
-</header>
+<div class="mb-4">
+  <h1 class="fw-bold fs-4 mb-1">Edição de Transação</h1>
+  <a class="text-secondary small text-decoration-none" href="{% url 'core:transaction-detail' pk=form.instance.id %}">
+    <span class="material-icons-outlined align-middle" style="font-size:0.9rem;">chevron_left</span>
+    {{form.instance.title}}
+  </a>
+</div>
 
 {% include "./form.html" %}
 
