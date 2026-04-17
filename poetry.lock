@@ -275,10 +275,18 @@ category = "main"
 optional = false
 python-versions = ">=2"
 
+[[package]]
+name = "xlsxwriter"
+version = "3.1.9"
+description = "A Python module for creating Excel XLSX files."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "ff31949a105b90c58dd39865c300c3f1e85afe6931cc96a9735ab03514aaafee"
+content-hash = "622ef8c9a1f57c845079a15dc7a7d7358b319665b6d7fd828a1e71a1e8a47b23"
 
 [metadata.files]
 asgiref = []
@@ -309,3 +317,4 @@ tomli = [
 ]
 typing-extensions = []
 tzdata = []
+xlsxwriter = []

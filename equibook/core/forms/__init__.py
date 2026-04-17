@@ -13,3 +13,4 @@ from .transaction import (  # NOQA
 from .operation import OperationForm, OperationMetaForm  # NOQA
 from .setting import SettingForm  # NOQA
 from .account import AccountForm  # NOQA
+from .export import TransactionHistoryExportForm  # NOQA

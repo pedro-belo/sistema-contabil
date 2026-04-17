@@ -53,3 +53,5 @@ from equibook.core.cache.account import (  # NOQA
 )
 
 from equibook.core.facade.trial_balance import TrialBalance
+
+from equibook.core.facade.export import export_transaction_history  # NOQA

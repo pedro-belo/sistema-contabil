@@ -1,4 +1,7 @@
+from django.http import HttpResponse
+
 from equibook.core import facade
+from equibook.core.forms import TransactionHistoryExportForm
 from . import base
 
 
@@ -44,6 +47,33 @@ class TrialBalanceView(base.DetailView):
         return context_data
 
 
+class TransactionHistoryExportView(base.FormView):
+    form_class = TransactionHistoryExportForm
+    template_name = "core/exports/transaction_history.html"
+    export_transaction_history_active = True
+
+    def get_form_kwargs(self):
+        return {**super().get_form_kwargs(), "user": self.request.user}
+
+    def form_valid(self, form):
+        periods = form.cleaned_data.get("period") or None
+        account = form.cleaned_data.get("account")
+        output = facade.export_transaction_history(
+            user=self.request.user, periods=periods, account=account
+        )
+        if periods and len(periods) == 1:
+            p = list(periods)[0]
+            filename = f"transacoes_{p.start_date}_{p.end_date}.xlsx"
+        else:
+            filename = "transacoes_historico.xlsx"
+        response = HttpResponse(
+            output.read(),
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+        response["Content-Disposition"] = f'attachment; filename="{filename}"'
+        return response
+
+
 url_patterns = [
     base.path(
         "trial-balance/<int:pk>/",
@@ -59,5 +89,10 @@ url_patterns = [
         "result-accounts/",
         ResultAccountsView.as_view(),
         name="result-accounts",
+    ),
+    base.path(
+        "exports/transaction-history/",
+        TransactionHistoryExportView.as_view(),
+        name="export-transaction-history",
     ),
 ]

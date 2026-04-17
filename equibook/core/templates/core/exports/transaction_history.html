@@ -1,0 +1,50 @@
+{% extends "core/base.html" %}
+
+{% block head_title %}Exportar Transações{% endblock %}
+
+{% block content %}
+
+<div class="mb-4">
+  <h1 class="fw-bold fs-4 mb-1">Exportar Histórico de Transações</h1>
+  <p class="text-secondary small mb-0">Selecione os filtros e baixe o relatório em formato XLSX</p>
+</div>
+
+<div class="row">
+  <div class="offset-md-3 col-md-6">
+
+    <form action="" method="post">
+      {% csrf_token %}
+
+      {% include "snippets/non_field_errors.html" with form=form %}
+
+      <div class="mb-3">
+        <label for="{{ form.period.id_for_label }}" class="form-label">Período(s) Contábil(is)</label>
+        {{ form.period }}
+        <div class="form-text">
+          Segure <kbd>Ctrl</kbd> para selecionar múltiplos períodos. Deixe em branco para exportar todos os períodos.
+        </div>
+        {% include "snippets/field_errors.html" with field=form.period %}
+      </div>
+
+      <div class="mb-3">
+        <label for="{{ form.account.id_for_label }}" class="form-label">Conta</label>
+        {{ form.account }}
+        <div class="form-text">Deixe em branco para exportar todas as contas do período</div>
+        {% include "snippets/field_errors.html" with field=form.account %}
+      </div>
+
+      <div class="text-center mt-4">
+        <button class="btn btn-success" type="submit">
+          <div class="d-flex align-items-center gap-1">
+            <span class="material-icons-outlined" style="font-size: 1.2rem;">download</span>
+            <span>Exportar XLSX</span>
+          </div>
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}

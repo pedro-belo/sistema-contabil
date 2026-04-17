@@ -35,6 +35,9 @@
                 href="{% url 'core:transaction-list' %}">Lista</a></li>
             <li><a class="dropdown-item {% if view.archived_transaction_list_active %}active{% endif %}"
                 href="{% url 'core:transaction-list-archived' %}">Arquivadas</a></li>
+            <li><hr class="dropdown-divider border-secondary"></li>
+            <li><a class="dropdown-item {% if view.export_transaction_history_active %}active{% endif %}"
+                href="{% url 'core:export-transaction-history' %}">Exportar XLSX</a></li>
           </ul>
         </li>
 
